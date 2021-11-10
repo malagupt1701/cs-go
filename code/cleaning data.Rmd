@@ -1,0 +1,131 @@
+---
+title: "Data check"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+library(jsonlite)
+match <- jsonlite::fromJSON("./../Data/source json/63 complexity-vs-big-nuke.json", simplifyVector = TRUE)
+```
+### Level one data
+```{r}
+print(match['matchID'])
+print(match['clientName'])
+print(match['mapName'])
+print(match['tickRate'])
+print(match['playbackTicks'])
+
+```
+```{r}
+# Parser config, not useful
+# print(match['parserParameters'])
+# Server config, not useful
+# print(match['serverVars'])
+# USEFUL
+print(match['matchPhases'])
+# USEFUL
+print(match['parsedPlaceNames'])
+# Not useful, we are dealing with pro level matches
+#print(match['matchmakingRanks'])
+
+
+```
+### Most important data:
+
+Data has to be handled carefully, as there as a lot of data, printing it would freeze the computer
+
+```{r}
+library(tidyjson)
+library(dplyr)
+
+  # 
+  #  CATEGORIES :
+  #   roundNum 
+  #   isWarmup
+  #   startTick
+  #   freezeTimeEndTick
+  #   endTick
+  #   endOfficialTick
+  #   bombPlantTick
+  #   tScore
+  #   ctScore
+  #   endTScore
+  #   endCTScore
+  #   ctTeam
+  #   tTeam
+  #   winningSide
+  #   winningTeam
+  #   losingTeam
+  #   roundEndReason
+  #   ctStartEqVal
+  #   ctRoundStartEqVal
+  #   ctRoundStartMoney
+  #   ctBuyType
+  #   ctSpend
+  #   tStartEqVal
+  #   tRoundStartMoney
+  #   tBuyType
+  #   tSpend
+  #   kills
+  #   damages
+  #   grenades
+  #   bombEvents
+  #   weaponFires
+  #   flashes
+  #   frames
+  #
+
+get_from_round <- function(category,round) {
+  
+  ##############################################
+  # input: gameround data category to return, round
+  # output: gameround data of the specified round
+  ##############################################
+  index <- which( match['gameRounds'][[1]]$roundNum ==round)[1]
+  if (is.null(index) || is.na(index)){
+    
+    #print('round not found')
+    NA
+  }
+  else{
+    ret <- data.frame(match['gameRounds'][[1]][[category]][index])
+    ret
+  }
+}
+
+
+
+
+get_from_allrounds <- function(category) {
+  
+  ##############################################
+  # input: gameround data category to return
+  #   output: gameround data of all game
+  ##############################################
+  ret <- NULL
+  for (round in  match['gameRounds'][[1]]$roundNum){
+    ret <- rbind(ret,data.frame(match['gameRounds'][[1]][[category]][round[1]]))
+    
+  }
+
+  ret
+
+}
+```
+```{r}
+get_from_round('kills',10)
+get_from_round('isWarmup',0)
+get_from_allrounds('flashes')
+```
+
+
