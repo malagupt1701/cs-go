@@ -103,9 +103,6 @@ get_from_round <- function(category,round) {
   }
 }
 
-
-
-
 get_from_allrounds <- function(category) {
   
   ##############################################
@@ -117,15 +114,108 @@ get_from_allrounds <- function(category) {
     ret <- rbind(ret,data.frame(match['gameRounds'][[1]][[category]][round[1]]))
     
   }
-
   ret
+}
 
+get_frames_from_round <- function(category,round,side=NA) {
+  
+  ##############################################
+  # input: frame  category to return (not working for player categories)
+  #   output:  frame  category data of all the round
+  ##############################################
+  index <- which( match['gameRounds'][[1]]$roundNum ==round)[1]
+  if (is.null(index) || is.na(index)){
+    #print('round not found')
+    NA
+  }
+  else{
+    frames <- match['gameRounds'][[1]][['frames']][index]
+    if(is.na(side)){
+      ret <- frames[[1]][[category]]
+      data.frame(ret)
+    }
+    else if(category=='side' || category=='teamName' || category=='teamEqVal' || category=='positionToken' ||category=='alivePlayers' || category=='totalUtility'){
+      ret <- frames[[1]][[side]][[category]]#[[1]][['inventory']]
+      data.frame(ret)}
+     else{
+       ret <- NA #frame[[1]][['t']][['players']][[sec]][['inventory']][player_num]
+       data.frame(ret)
+    }
+  }
+}
+
+
+get_frames_from_allrounds <- function(category,side=NA) {
+  
+  ret <- NULL
+  for (round in  match['gameRounds'][[1]]$roundNum){
+    ret <- rbind(ret,data.frame(get_frames_from_round(category,round[1],side)))
+    
+  }
+  ret
 }
 ```
+
+```{r}
+
+library(progress)
+get_all<- function(FUN,arg1=NULL,arg2=NULL,arg3=NULL){
+  filenames <-  list.files("./../Data/testing subset/", pattern="*.json", full.names=TRUE)
+  ret <-NULL
+  pb <- progress_bar$new(total = length(filenames))
+  for(file in filenames){
+    
+    match <- jsonlite::fromJSON(file, simplifyVector = TRUE)
+    ret <- rbind(ret,FUN(arg1))
+    pb$tick()
+  }
+  ret
+}
+```
+```{r}
+allkills <- get_all(FUN = get_from_allrounds,arg1='kills')
+allkills
+saveRDS(allkills, file="kills.Rda")
+
+alldamages <- get_all(FUN = get_from_allrounds,arg1='damages')
+saveRDS(alldamages, file="damages.Rda")
+
+allgrenades <- get_all(FUN = get_from_allrounds,arg1='grenades')
+saveRDS(allgrenades, file="grenades.Rda")
+allgrenades
+allbombEvents <- get_all(FUN = get_from_allrounds,arg1='bombEvents')
+saveRDS(allbombEvents, file="bombEvents.Rda")
+allbombEvents
+allweaponFires <- get_all(FUN = get_from_allrounds,arg1='weaponFires')
+saveRDS(allweaponFires, file="weaponFires.Rda")
+allweaponFires
+
+
+allflashes <- get_all(FUN = get_from_allrounds,arg1='flashes')
+saveRDS(allflashes, file="flashes.Rda")
+allflashes
+```
+```{r}
+na_rows <- function(df){
+  df[rowSums(is.na(df)) > 0,]
+}
+na_rows(allkills)
+na_rows(allgrenades)
+na_rows(allbombEvents)
+na_rows(readRDS("weaponFires.Rda"))
+na_rows(alldamages)
+alldamages
+```
+
 ```{r}
 get_from_round('kills',10)
 get_from_round('isWarmup',0)
 get_from_allrounds('flashes')
+frame <- match['gameRounds'][[1]][['frames']][10]
+#i <- length(frame[[1]][['t']][['players']])
+
+get_frames_form_round('seconds',10)
+get_frames_from_allrounds('alivePlayers','ct')
 ```
 
 
