@@ -100,6 +100,31 @@
 <div id="data-sources" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Data sources</h1>
 
+<p style = "text-indent:1cm;"> For the purposes of this project, we worked with files generated during real matches by the game itself. They are called ‘demo’ files and were
+created by developers to replay matches from any point of view. </p>
+
+<p style = "text-indent:1cm;"> We chose to download all demo files from pro matches that occurred in ‘<b>Majors</b>’ (Majors are the most prestigious events of <i>CSGO</i>). Valve – the company that created <i>CSGO</i> – are a sponsor of Majors, hence making it possible to download the data from the game itself. However, using the game client makes it harder to implement large-scale scraping as we would need for our analysis purposes. Therefore, we used ‘hltv.org’ – a website compiling all pro-level matches – to download the demo files that we needed; ‘hltv.org’ collaborates with event organizers to display real-time statistics and scores, and shares recorded demo files. </p>
+
+<p style = "text-indent:1cm;"> All Major matches can be accessed here: <a href="url">https://www.hltv.org/stats/matches?matchType=Majors</a>. 
+From those matches, demos can be downloaded. For example: <a href="url">https://www.hltv.org/matches/2335630/natus-vincere-vs-mousesports-starladder-majorberlin-2019</a> (under ‘<i>Rewatch</i>’: ‘<b>GOTV Demo</b>’ button). </p> 
+
+
+<p style = "text-indent:1cm;"> We downloaded more than 600 demo files, which adds up to <b>more than 90GB of data</b>. </p> 
+
+<p style = "text-indent:1cm;"> The Demo files (.dem) are raw files, we used a python library (csgo.parser, by Peter Xenopoulos) to parse them in JSON files, resulting in 625 successful conversions and 20GB of pre-processed data. The generated JSON files can be accessed using a Lion Mail account: <a href="url">https://drive.google.com/drive/folders/1e4d7hVlSO20M1fpgbGD6TZd69vGqg2p_?usp=sharing</a>.
+
+Nonetheless, the pre-processed data is still far from being clean; some files are corrupted, and in-game technical pauses, warmup rounds, game restarts, etc. can mess up the format and add inexistant rounds.
+
+The following Python notebook explains the data structure of a generated JSON file:
+<a href="url">https://github.com/anhvung/EDAV_Project_Report/blob/main/code/Understanding%20the%20data.ipynb</a>. </p> 
+
+<b>Now, how can this data bring answers to our questions? </b>
+
+<p style = "text-indent:1cm;">Game analysts and players traditionally watch the demo replays to study teams andplayer behaviors. Data can help automate this process by revealing some players’ habits. For instance, we could look at the buying habits of a team, their preferential positions on maps, the patterns of their grenade throwing, etc.  </p> 
+<p style = "text-indent:1cm;">Data can help understand the performance of players and teams by calculating somemetrics such as accuracy, teamplay flashes, trades, assists, etc. Those metrics can be combined to create a global rating. Developers have tried to change weapon behaviors, game economy, maps, and player movements to make the game more balanced. Despite numerous updates since its release 10 years ago, players constantly give their feedback on the state of the game to make it evolve. Having a look at win rates in different situations throughout the years can help understand the updates, and shed light on potential fixes that can be made.</p> 
+ </p>
+
+
 </div>
             </section>
 
