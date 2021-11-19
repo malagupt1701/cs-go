@@ -30,7 +30,7 @@ Similarly less than 15 percent of kills are helped with assists (patterns 2,5 in
 
 A player is traded when one of his teammates get an immediate revenge on the enemy player who got the initial kill (patterns 3,5,6 in the graph below). Again, about 15 percent of the kills are traded. A trade is important because it ensures that the other team does not get the numerical advantage.
 
-Less than 30 percent of the kills have one of the previous points i.e. for more than 70 percent of the kills, flash, assist and revenge do not happen.
+Surprisingly, there are no complete cases the 30 sampled matches i.e there are no kills with all three previous points at the same time
 
 ```{r , fig.width=6, fig.height=6}
 data <- data %>% rename(OTHER=tick)
