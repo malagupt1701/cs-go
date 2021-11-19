@@ -1,0 +1,9 @@
+introduction
+data-sources
+data-transformation
+missing-values
+kills-data
+damages-data
+results
+interactive-component
+conclusion

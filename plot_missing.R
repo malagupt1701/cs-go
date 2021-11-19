@@ -1,0 +1,96 @@
+plot_missing <- function(data , Percentflag) {
+  library(tidyverse)
+  library(patchwork)
+  library(janitor)
+  variable.values <- data %>%
+    gather(key = "key", value = "val") %>%
+    mutate(is.missing = is.na(val)) %>%
+    group_by(key, is.missing) %>%
+    summarise(missing_count = n())
+  
+  
+  no_missing_values_variable <- variable.values  %>% 
+    filter(is.missing==F && missing_count == nrow(data))
+  
+  no_missing_values_variable[no_missing_values_variable == nrow(data)] <- 0
+  
+  missing_values_variable <- variable.values %>% filter(is.missing==T)
+  
+  total_set <- rbind(no_missing_values_variable , missing_values_variable ) %>% 
+    select(-is.missing) %>% arrange(desc(missing_count)) 
+  
+  if(Percentflag){
+    total_set$missing_count <- total_set$missing_count / nrow(data) * 100
+  }
+  
+  missing_patterns <- data.frame(is.na(data)) %>%
+    group_by_all() %>%
+    count(name = "count", sort = TRUE) %>%
+    ungroup()
+  
+  missing_patterns_converted <- missing_patterns %>%  mutate_all(as.integer) %>%  adorn_totals("col") 
+  complete_cases_rowno <- which(missing_patterns_converted$count == missing_patterns_converted$Total)
+  missing_patterns_converted <- missing_patterns_converted %>% 
+    mutate(fct = ifelse(missing_patterns_converted$count == missing_patterns_converted$Total, 1, 0.5))%>%
+    rownames_to_column("id")
+  
+  if(Percentflag){
+    missing_patterns_converted$count <- missing_patterns_converted$count / nrow(data) * 100
+  }
+  
+  missing_dataset <- missing_patterns %>% 
+    rownames_to_column("id") %>% 
+    gather(key, value, -id) 
+  
+  comp <- which(rowSums(missing_patterns_converted[,'fct'])==1.0)
+  if (length(comp) == 0) { comp <- 0 }
+  
+  missing_dataset <- merge(
+    
+    x = missing_dataset, y = total_set, by = "key", all.x = TRUE)
+  missing_dataset$factor <- as.factor(missing_dataset$value)
+  
+  if (comp != 0) { 
+    missing_dataset$factor <- as.factor(ifelse(missing_dataset$id == complete_cases_rowno, .5, missing_dataset$factor ))}
+  
+  ylevels <- reorder(missing_patterns_converted$id,  missing_patterns_converted$count)
+  ylevels
+  
+  chart1 <- ggplot(total_set) + 
+    geom_bar(aes(x=reorder(key , -missing_count), y=missing_count), stat = 'identity',fill="dodgerblue2")+ 
+    labs(x='',y = ifelse(Percentflag == TRUE , "% rows \n missing" ,"num rows \n missing")) +
+    theme_bw()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  
+  if (comp != 0) { 
+    chart2 <- ggplot(missing_dataset,aes(x = fct_reorder(key, - missing_count), y = fct_relevel(id,levels(ylevels)), fill =factor))+
+      geom_tile(data = subset(missing_dataset , key != "count"), color = "white" , show.legend = FALSE) +
+      labs(x='variable', y="missing pattern")+
+      scale_fill_manual(values=c("gray45", "gray74" , "plum2")) + 
+      theme_bw()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  }else{
+    chart2 <- ggplot(missing_dataset,aes(x = fct_reorder(key, - missing_count), y = fct_relevel(id,levels(ylevels)), fill =factor))+
+      geom_tile(data = subset(missing_dataset , key != "count"), color = "white" , show.legend = FALSE) +
+      labs(x='variable', y="missing pattern")+
+      scale_fill_manual(values=c( "gray74" , "plum2")) + 
+      theme_bw()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+    
+  }
+  
+  if (comp != 0) { chart2 <- chart2 + # adjustments due to grid starting at 0,0
+    annotate("text", 
+             x=ncol(missing_patterns)/2, 
+             y=nrow(missing_patterns)+1-comp, 
+             label="complete cases")}
+  
+  chart3 <- ggplot(missing_patterns_converted , aes(x = reorder ( id , count) , y = count)) + 
+    geom_bar(stat = 'identity',  fill="dodgerblue2" , alpha =  (missing_patterns_converted$fct))+
+    scale_alpha_manual(values = c("0.5" = 0.5 , "1" = 1))+
+    labs(x='', y = ifelse(Percentflag == TRUE , "% rows" ,"row count")) + 
+    coord_flip() +
+    theme_bw()
+  
+  (chart1 + plot_spacer()+plot_layout(width=c(2.5,1))) / (chart2 + chart3 + plot_layout(widths = c(3,1)))+plot_layout(heights = c(1,3))
+  
+  
+  
+}

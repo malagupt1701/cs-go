@@ -219,3 +219,15 @@ get_frames_from_allrounds('alivePlayers','ct')
 ```
 
 
+```{r , fig.width=10, fig.height=8}
+data <- readRDS(file = "kills.Rda")
+plot_missing(data, Percentflag  = TRUE)
+
+```
+```{r , fig.width=10, fig.height=8}
+data <- readRDS(file = "kills.Rda")
+plot_missing(data, Percentflag  = FALSE)
+
+```
+```
+

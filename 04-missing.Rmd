@@ -1,62 +1,58 @@
 # Missing values
-plot_missing <- function(data , Percentflag) {
-  
-  variable.values <- data %>%
-    gather(key = "key", value = "val") %>%
-    mutate(is.missing = is.na(val)) %>%
-    group_by(key, is.missing) %>%
-    summarise(missing_count = n())
-  no_missing_values_variable <- variable.values  %>% 
-    filter(is.missing==F && missing_count == nrow(data))
-  no_missing_values_variable[no_missing_values_variable == nrow(data)] <- 0
-  missing_values_variable <- variable.values %>% filter(is.missing==T)
-  total_set <- rbind(no_missing_values_variable , missing_values_variable ) %>% 
-    select(-is.missing) %>% arrange(desc(missing_count)) 
-  
-  if(Percentflag){
-    total_set$missing_count <- total_set$missing_count / nrow(data) * 100
-  }
+```{r, include=FALSE}
+source('plot_missing.R')
+knitr::opts_chunk$set(warning = FALSE,
+                      message = FALSE)
+```
 
-  missing_patterns <- data.frame(is.na(data)) %>%
-  group_by_all() %>%
-  count(name = "count", sort = TRUE) %>%
-  ungroup()
-
-missing_patterns_converted <- missing_patterns %>%  mutate_all(as.integer) %>%  adorn_totals("col") 
-complete_cases_rowno <- which(missing_patterns_converted$count == missing_patterns_converted$Total)
-missing_patterns_converted <- missing_patterns_converted %>% 
-  mutate(fct = ifelse(missing_patterns_converted$count == missing_patterns_converted$Total, 1, 0.5))%>%
-  rownames_to_column("id")
-
-  missing_dataset <- missing_patterns %>% 
-    rownames_to_column("id") %>% 
-    gather(key, value, -id) 
-
-  missing_dataset <- merge(x = missing_dataset, y = total_set, by = "key", all.x = TRUE)
-  missing_dataset$factor <- as.factor(missing_dataset$value)
-  missing_dataset$factor <- as.factor(ifelse(missing_dataset$id == complete_cases_rowno, .5, missing_dataset$factor ))
-  
-
-  chart1 <- ggplot(total_set) + 
-    geom_bar(aes(x=reorder(key , -missing_count), y=missing_count), stat = 'identity',fill="lightblue")+ 
-    labs(x='',y = ifelse(Percentflag == TRUE , "% rows missing" ,"num rows missing")) +
-    theme_bw()
+We'll have a look at the missing data. For this analysis, be chose a subset of 30 random matches for a reasonable processing time.
+Of all the matches data, only the kills and damages data frames contained missing data.
 
 
-  chart2 <- ggplot(missing_dataset,aes(x = fct_reorder(key, - missing_count), y = fct_rev(id), fill =factor))+
-    geom_tile(data = subset(missing_dataset , key != "count"), color = "white" , show.legend = FALSE) +
-    labs(x='variable', y="missing pattern")+
-    scale_fill_manual(values=c("gray45", "gray74" , "plum2")) + 
-    theme_bw()
+## Kills data
 
-  chart3 <- ggplot(missing_patterns_converted , aes(x = reorder ( id , count) , y = count)) + 
-    geom_bar(stat = 'identity',  fill="lightblue" , alpha =  (missing_patterns_converted$fct))+
-    scale_alpha_manual(values = c("0.5" = 0.5 , "1" = 1))+
-    labs(x='', y = ifelse(Percentflag == TRUE , "% rows" ,"row count")) + 
-    coord_flip() +
-    theme_bw()
-  
-    (chart1 + plot_spacer()+plot_layout(width=c(2.5,1))) / (chart2 + chart3 + plot_layout(widths = c(3,1)))+plot_layout(heights = c(1,3))
-  
-  
-}
+The kills data frame contains information about each confirmed kill by any of the 10 players of both teams.
+```{r , fig.width=14, fig.height=8}
+data <- readRDS(file = "code/kills.Rda")
+plot_missing(data, Percentflag  = TRUE)
+```
+(Variables beginning with 'flash')
+
+Flash grenades are thrown to temporarily blind the enemy players.
+The missing data is expected: when a player is killed, it has not necessarily been flashed by a flash grenade before (patterns 1,2,3,5 in the graph below). We can see that the vast majority of kills are done without the victim being flashed. Less than 10 percent of the kills are done with the help of flash grenades (patterns 4,6 in the graph below).
+
+
+(Variables beginning with 'assist')
+
+Similarly less than 15 percent of kills are helped with assists (patterns 2,5 in the graph below). An assist occurs when a teammate deals more than 40 points of damage to a player before that player is killed. The teammate then gets the assist for dealing damages, thus helping the kill. 
+
+(Variables beginning with 'playerTraded')
+
+A player is traded when one of his teammates get an immediate revenge on the enemy player who got the initial kill (patterns 3,5,6 in the graph below). Again, about 15 percent of the kills are traded. A trade is important because it ensures that the other team does not get the numerical advantage.
+
+Less than 30 percent of the kills have one of the previous points i.e. for more than 70 percent of the kills, flash, assist and revenge do not happen.
+
+```{r , fig.width=6, fig.height=6}
+data <- data %>% rename(OTHER=tick)
+data <- data[,c('flashThrowerSide','flashThrowerTeam','flashThrowerName','flashThrowerSteamID','assisterName','assisterTeam','assisterSide','assisterSteamID','playerTradedName','playerTradedSteamID','playerTradedTeam','OTHER')]
+plot_missing(data, Percentflag  = TRUE)
+```
+
+
+## Damages data
+
+The damages data frame contains information about each damage a player receives. A damage results in less health points.
+
+```{r , fig.width=14, fig.height=8}
+data <- readRDS(file = "code/damages.Rda")
+plot_missing(data, Percentflag  = TRUE)
+```
+Most damages (98 percent) are inflicted by a player (bullet or grenade damages). But about 2 percent of damages are not dealt by a player. Those are caused by the game environment: falling damage or bomb damage (no player is linked to a planted bomb). Pattern 2 shows the affected variables
+
+
+```{r , fig.width=6, fig.height=6}
+data <- data %>% rename(OTHER=tick)
+data <- data[,c('attackerSteamID','attackerName','attackerTeam','attackerSide','attackerX','attackerY','attackerZ','attackerAreaID','attackerAreaName','attackerViewX','attackerViewY','attackerStrafe','OTHER')]
+plot_missing(data, Percentflag  = TRUE)
+```
+

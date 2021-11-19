@@ -1,0 +1,262 @@
+---
+title: "PSet 4"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+# this prevents package loading message from appearing in the rendered version of your problem set
+knitr::opts_chunk$set(warning = FALSE, message = FALSE,
+                      echo = TRUE)
+```
+
+### 1. `mycars` missing patterns
+
+Create a missing values plot for the `mycars` dataset created below (slightly different from the one in the lecture slides). Your plot should be in the style of `extracat::visna()` (no longer available on CRAN) using **ggplot2** to create the main plot and two side plots and **patchwork** to put them together. It should show accurately: missing patterns,  counts for missing by column and missing by pattern, and make it clear which row represents complete cases. Bars in the side plots should be sorted and correspond to the rows and columns of the main plot. An example is provided though the aesthetics of your plot do not have to conform precisely to the example. Some code is provided to get you started with finding missing patterns. (Keep in mind that in the next question you will be turning this code into a function so to save yourself time later on write as generically as possible.)
+
+```{r}
+library(tidyverse)
+library(patchwork)
+library(janitor)
+
+# Add NAs to mtcars dataset
+set.seed(5702)
+mycars <- mtcars
+mycars[1:25, "gear"] <- NA
+mycars[10:20, 3:5] <- NA
+for (i in 1:10) mycars[sample(32,1), sample(11,1)] <- NA
+
+```
+
+Missing Values by Column Count
+
+```{r}
+variable.values <- mycars %>%
+    gather(key = "key", value = "val") %>%
+    mutate(is.missing = is.na(val)) %>%
+    group_by(key, is.missing) %>%
+    summarise(missing_count = n())
+no_missing_values_variable <- variable.values  %>% 
+  filter(is.missing==F && missing_count == nrow(mycars))
+no_missing_values_variable[no_missing_values_variable == nrow(mycars)] <- 0
+missing_values_variable <- variable.values %>% 
+  filter(is.missing==T)
+total_set <- rbind(no_missing_values_variable , missing_values_variable ) %>% 
+  select(-is.missing) %>% 
+  arrange(desc(missing_count)) 
+
+```
+
+Code to find and count the missing patterns:
+```{r }
+
+missing_patterns <- data.frame(is.na(mycars)) %>%
+  group_by_all() %>%
+  count(name = "count", sort = TRUE) %>%
+  ungroup()
+
+missing_patterns_converted <- missing_patterns %>%  mutate_all(as.integer) %>%  adorn_totals("col") 
+missing_patterns_converted
+complete_cases_rowno <- which(missing_patterns_converted$count == missing_patterns_converted$Total)
+missing_patterns_converted <- missing_patterns_converted %>% 
+  mutate(fct = ifelse(missing_patterns_converted$count == missing_patterns_converted$Total, 1, 0.5))%>%
+  rownames_to_column("id")
+
+missing_dataset <- missing_patterns %>% 
+    rownames_to_column("id") %>% 
+    gather(key, value, -id) 
+
+missing_dataset <- merge(x = missing_dataset, y = total_set, by = "key", all.x = TRUE)
+missing_dataset$factor <- as.factor(missing_dataset$value)
+missing_dataset$factor <- as.factor(ifelse(missing_dataset$id == complete_cases_rowno, .5, missing_dataset$factor ))
+
+```
+
+Different Charts
+
+```{r}
+chart1 <- ggplot(total_set) + 
+  geom_bar(aes(x=reorder(key , -missing_count), y=missing_count), stat = 'identity',fill="dodgerblue2")+theme_bw()+ 
+  labs(x='', y="num rows missing") 
+```
+```{r}
+missing_dataset
+
+chart2 <- ggplot(missing_dataset, aes(x = fct_reorder(key, -missing_count), y = fct_rev(id), fill = factor)) +
+  geom_tile(data = subset(missing_dataset , key != "count"), color = "white" , show.legend = FALSE) + 
+  labs(x='variable', y="missing pattern")+
+  scale_fill_manual(values=c("gray45", "gray74" , "plum2")) + 
+  theme_bw()
+
+```
+```{r}
+chart3 <- ggplot(missing_patterns_converted , aes(x = reorder ( id , count) , y = count)) + 
+  geom_bar(stat = 'identity',  fill="dodgerblue2" , alpha =  (missing_patterns_converted$fct)) + scale_alpha_manual(values = c("0.5" = 0.5 , "1" = 1))+labs(x='', y="row count") + theme_bw()+coord_flip() 
+
+```
+
+### Final result:
+```{r}
+
+  (chart1 + plot_spacer()+plot_layout(width=c(2.5,1))) / (chart2 + chart3 + plot_layout(widths = c(3,1)))+plot_layout(heights = c(1,3))
+  
+```
+
+### 2. Missing value plot function
+
+a) Create a function for creating missing plots based on your code from question 1. It should provide an option to show either missing counts or missing percent. The percent option for `mycars` is shown below.
+
+You either put the function code in a separate `.R` file or include it in the `.Rmd` file.
+```{r}
+plot_missing <- function(data , Percentflag) {
+ 
+variable.values <- data %>%
+    gather(key = "key", value = "val") %>%
+    mutate(is.missing = is.na(val)) %>%
+    group_by(key, is.missing) %>%
+    summarise(missing_count = n())
+  
+  
+  no_missing_values_variable <- variable.values  %>% 
+    filter(is.missing==F && missing_count == nrow(data))
+  
+  no_missing_values_variable[no_missing_values_variable == nrow(data)] <- 0
+  
+  missing_values_variable <- variable.values %>% filter(is.missing==T)
+  
+  total_set <- rbind(no_missing_values_variable , missing_values_variable ) %>% 
+    select(-is.missing) %>% arrange(desc(missing_count)) 
+  
+  if(Percentflag){
+    total_set$missing_count <- total_set$missing_count / nrow(data) * 100
+  }
+
+  missing_patterns <- data.frame(is.na(data)) %>%
+  group_by_all() %>%
+  count(name = "count", sort = TRUE) %>%
+  ungroup()
+
+missing_patterns_converted <- missing_patterns %>%  mutate_all(as.integer) %>%  adorn_totals("col") 
+complete_cases_rowno <- which(missing_patterns_converted$count == missing_patterns_converted$Total)
+missing_patterns_converted <- missing_patterns_converted %>% 
+  mutate(fct = ifelse(missing_patterns_converted$count == missing_patterns_converted$Total, 1, 0.5))%>%
+  rownames_to_column("id")
+
+  if(Percentflag){
+    missing_patterns_converted$count <- missing_patterns_converted$count / nrow(data) * 100
+  }
+
+  missing_dataset <- missing_patterns %>% 
+    rownames_to_column("id") %>% 
+    gather(key, value, -id) 
+  
+comp <- which(rowSums(missing_patterns_converted[,'fct'])==1.0)
+if (length(comp) == 0) { comp <- 0 }
+
+  missing_dataset <- merge(
+    
+    x = missing_dataset, y = total_set, by = "key", all.x = TRUE)
+  missing_dataset$factor <- as.factor(missing_dataset$value)
+  
+  if (comp != 0) { 
+  missing_dataset$factor <- as.factor(ifelse(missing_dataset$id == complete_cases_rowno, .5, missing_dataset$factor ))}
+  
+  ylevels <- reorder(missing_patterns_converted$id,  missing_patterns_converted$count)
+  ylevels
+
+  chart1 <- ggplot(total_set) + 
+    geom_bar(aes(x=reorder(key , -missing_count), y=missing_count), stat = 'identity',fill="dodgerblue2")+ 
+    labs(x='',y = ifelse(Percentflag == TRUE , "% rows \n missing" ,"num rows \n missing")) +
+    theme_bw()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+if (comp != 0) { 
+  chart2 <- ggplot(missing_dataset,aes(x = fct_reorder(key, - missing_count), y = fct_relevel(id,levels(ylevels)), fill =factor))+
+    geom_tile(data = subset(missing_dataset , key != "count"), color = "white" , show.legend = FALSE) +
+    labs(x='variable', y="missing pattern")+
+    scale_fill_manual(values=c("gray45", "gray74" , "plum2")) + 
+    theme_bw()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+}else{
+      chart2 <- ggplot(missing_dataset,aes(x = fct_reorder(key, - missing_count), y = fct_relevel(id,levels(ylevels)), fill =factor))+
+    geom_tile(data = subset(missing_dataset , key != "count"), color = "white" , show.legend = FALSE) +
+    labs(x='variable', y="missing pattern")+
+    scale_fill_manual(values=c( "gray74" , "plum2")) + 
+    theme_bw()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  
+  }
+  
+ if (comp != 0) { chart2 <- chart2 + # adjustments due to grid starting at 0,0
+    annotate("text", 
+             x=ncol(missing_patterns)/2, 
+             y=nrow(missing_patterns)+1-comp, 
+             label="complete cases")}
+
+  chart3 <- ggplot(missing_patterns_converted , aes(x = reorder ( id , count) , y = count)) + 
+    geom_bar(stat = 'identity',  fill="dodgerblue2" , alpha =  (missing_patterns_converted$fct))+
+    scale_alpha_manual(values = c("0.5" = 0.5 , "1" = 1))+
+    labs(x='', y = ifelse(Percentflag == TRUE , "% rows" ,"row count")) + 
+    coord_flip() +
+    theme_bw()
+  
+    (chart1 + plot_spacer()+plot_layout(width=c(2.5,1))) / (chart2 + chart3 + plot_layout(widths = c(3,1)))+plot_layout(heights = c(1,3))
+
+
+ 
+}
+```
+```{r}
+plot_missing(mycars, Percentflag  = FALSE)
+```
+```{r}
+plot_missing(mycars, Percentflag  = TRUE)
+```
+
+b) Show the output for both options (counts / percent) for the `economics` dataset in the **ggplot2** package. (This is a test to see if your function works if there are no missing values.)
+
+```{r}
+plot_missing(economics, Percentflag  = FALSE)
+```
+```{r}
+plot_missing(economics, Percentflag  = TRUE)
+```
+
+
+
+c) Show the output for both options (counts / percent) for the `HollywoodMovies2011` dataset in the **Lock5withR** package. You can shorten the column names so they don't overlap in the plot.
+
+```{r }
+library(Lock5withR)
+names(HollywoodMovies2011) <- abbreviate(names(HollywoodMovies2011), minlength=2)
+plot_missing(HollywoodMovies2011, Percentflag  = FALSE)
+```
+```{r }
+plot_missing(HollywoodMovies2011, Percentflag  = TRUE)
+```
+
+
+
+
+
+### 3. Setup your GitHub final project repo
+
+a) Set up your final project repository following the [EDAVproject template](https://github.com/jtr13/EDAVtemplate). You can either choose one team member's GitHub account, or create an organization to house the final project. *Be sure to follow all of the steps in the README so your bookdown book renders with your information, not the placeholders in the template.* Edit the link below to point to your rendered book:
+
+https://github.com/anhvung/csgo_pro_matches_analysis
+
+b) Make sure that all team members have write access to the repository and have practiced making contributions. Edit the link below to point to your contributors page, showing that all team members have made contributions to the repo (Note that we do not have the ability to see who has write access, only who has contributed):
+
+https://github.com/anhvung/csgo_pro_matches_analysis/graphs/contributors
+
+c) Discuss a plan for dividing up the work for the final project and briefly summarize what each person will do.
+
+### 4. Missing values chapter
+
+Write a first draft of the missing values chapter of your final project. You do not have to include all of the data you use in the final project. Choose one file and analyze it using techniques discussed in class for missing values. Include a plot using your function from Q2 as well as verbal interpretation of the plot. Edit this link to point to your chapter:
+
+https://anhvung.github.io/csgo_pro_matches_analysis/missing-values.html
+
+**If your data for the final project has no missing values, you may use one of the following datasets instead for this question. You can include your answer here since it doesn't belong in your final project.**
+
+**fivethirtyeight** package: `avengers`, `bachelorette`, `dem_candidates`, `steak_survey`, `trumpworld_polls`
+
+**openintro** package: `birds`, `ucla_textbooks_f18` 
