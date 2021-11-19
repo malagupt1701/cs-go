@@ -1,6 +1,6 @@
 --- 
-title: "YOUR TITLE HERE"
-author: "YOUR NAMES HERE"
+title: "Analysis of pro-level competitive matches in Counter-Strike Global Offensive"
+author: "Anh-Vu Nguyen, Malaika Gupta, Wael Boukhobza"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
