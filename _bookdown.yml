@@ -1,8 +1,8 @@
 book_filename: "finalproj"
 output_dir: docs
 delete_merged_file: true
-edit: https://github.com/anhvung/EDAV_Project_Report/edit/main/%s
-view: https://github.com/anhvung/EDAV_Project_Report/blob/main/%s
+edit: https://github.com/anhvung/csgo_pro_matches_analysis/edit/main/%s
+view: https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/%s
 language:
   ui:
     chapter_name: "Chapter "
