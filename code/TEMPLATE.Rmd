@@ -1,0 +1,77 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## data lion drive link: https://drive.google.com/drive/folders/10wndQSJ15Pvd97XwZ32J_BSu3F-clxIQ?usp=sharing
+
+## This is how to load json files
+
+```{r}
+#This is how to load json files 
+library(jsonlite)
+kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
+```
+
+## Example to get the average kill per round stat for each player (kpr)
+```{r}
+library(tidyverse)
+head(kills)
+
+#avg kills per match for each player (kpr = kill per round)
+test <- kills %>% filter(attackerTeam!=victimTeam) %>%  group_by(match_id,attackerSteamID) %>% summarise(kpr=n()/last(round_tot),Name=last(attackerName))
+
+#kpr over all matches
+test <- test %>%  group_by(attackerSteamID) %>%  summarise(kpr=sum(kpr)/n(),tot_matches=n(),name=first(Name))
+#Sort
+test <- test %>% arrange( -kpr,-tot_matches)
+test
+```
+
+## Example to get the average damage dealt per round stat for each player
+```{r}
+damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
+damages
+
+#adr per match for each player
+test <- damages %>% filter(attackerTeam!=victimTeam) %>%  group_by(match_id,attackerSteamID) %>% summarise(adr=sum(hpDamage)/last(round_tot),Name=last(attackerName))
+#adr over all matches
+test <- test %>%  group_by(attackerSteamID) %>%  summarise(adr=sum(adr)/n(),tot_matches=n(),name=first(Name))
+#Sort
+test <- test %>% arrange( -adr,-tot_matches)
+test
+```
+K/D (Kills per Death)
+```{r}
+#kills per round
+k <- kills %>% filter(attackerTeam!=victimTeam) %>%  group_by(match_id,attackerSteamID) %>% summarise(kills=n(),Name=last(attackerName))
+
+
+k <- k %>%  group_by(attackerSteamID) %>%  summarise(kills=sum(kills),tot_matches=n(),name=first(Name))
+#Sort
+k <- k %>% arrange( -kills,-tot_matches)
+k
+
+#death per round
+d <- kills %>% filter(attackerTeam!=victimTeam) %>%  group_by(match_id,victimSteamID) %>% summarise(deaths=n(),Name=last(victimName))
+
+
+d <- d %>%  group_by(victimSteamID) %>%  summarise(deaths=sum(deaths),tot_matches=n(),name=first(Name))
+#Sort
+d <- d %>% arrange( deaths,-tot_matches)
+d
+
+joined <-  merge(k, d) %>% mutate(kd=kills/deaths)%>% mutate(kd_diff=kills-deaths) %>%  arrange( -kd,-tot_matches)
+joined
+```
+
+
+
+
+# player id and name association (name vary over time so we have to use id (attackerSteamID) to refer to a player)
+```{r}
+steamid <- match  %>%  group_by(attackerSteamID) %>% summarise(Name=last(attackerName))
+steamid
+```
+
+
