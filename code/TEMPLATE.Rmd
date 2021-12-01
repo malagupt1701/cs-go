@@ -5,6 +5,20 @@ output: html_notebook
 
 ## data lion drive link: https://drive.google.com/drive/folders/10wndQSJ15Pvd97XwZ32J_BSu3F-clxIQ?usp=sharing
 
+
+##Useful info for all rows
+
+"round_won_by": team that won the round
+ "match_id": "0 astralis-vs-cr4zy-m1-inferno" unique match identifier
+"map_name": name of map played
+ "round_num": number of the round from 1 to the last round
+"round_tot": total number of rounds in the match
+"match_event": unique event identifier ex "StarLadder Major Berlin 2019"
+"match_date": date of match in milliseconds
+"match_team1": name of a team
+"match_team2": name of the other team
+
+
 ## This is how to load json files
 
 ```{r}
