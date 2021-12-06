@@ -1,0 +1,116 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## data lion drive link: https://drive.google.com/drive/folders/10wndQSJ15Pvd97XwZ32J_BSu3F-clxIQ?usp=sharing
+
+
+##Useful info for all rows
+
+"round_won_by": team that won the round
+ "match_id": "0 astralis-vs-cr4zy-m1-inferno" unique match identifier
+"map_name": name of map played
+ "round_num": number of the round from 1 to the last round
+"round_tot": total number of rounds in the match
+"match_event": unique event identifier ex "StarLadder Major Berlin 2019"
+"match_date": date of match in milliseconds
+"match_team1": name of a team
+"match_team2": name of the other team
+
+
+## This is how to load json files
+
+```{r}
+#This is how to load json files 
+library(jsonlite)
+grenades <- jsonlite::fromJSON("data/ALL_grenades.json", simplifyVector = TRUE)
+kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
+damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
+flashes <- jsonlite::fromJSON("data/ALL_flashes.json", simplifyVector = TRUE)
+```
+
+
+```{r}
+library(dplyr)
+
+wins <- kills %>% group_by(match_id) %>% summarise(round_tot=last(round_tot)+1,team1=last(match_team1),team2=last(match_team2),winner=last(round_won_by),looser=if_else(last(round_won_by)!=last(match_team1),last(match_team1),last(team2)))
+
+wins <- wins %>%  mutate(final_score_winner=if_else(round_tot<31,16, 19+3*(  (round_tot-31)%/%6))) %>%  mutate(final_score_looser=round_tot-final_score_winner) %>% mutate(score_diff=(final_score_winner-final_score_looser)/round_tot)
+wins
+               
+             
+```
+
+Team stats
+
+kills
+
+```{r}
+kills
+#team stats on kills
+team_kills <- kills %>% filter(attackerTeam!=victimTeam) %>%  group_by(match_id,attackerTeam) %>% summarise(kills_tot=n(),kpr=n()/last(round_tot),team=last(attackerTeam),hs_percent= sum(isHeadshot==TRUE)/n(),blinded_percent=sum(attackerBlinded==TRUE)/n(),blinded_percent=sum(victimBlinded==TRUE)/n(),first_kill_percent=sum(isFirstKill==TRUE)/last(round_tot),first_kill_percent=sum(isFirstKill==TRUE)/last(round_tot),non_traded_percent=sum(isTrade==FALSE)/n(),assist_percent= sum(!is.na(assisterTeam))/last(round_tot))
+
+team_kills
+
+#team stats on  damages
+team_damages <- damages %>% filter(attackerTeam!=victimTeam) %>%  group_by(match_id,attackerTeam) %>% summarise(adr=sum(hpDamageTaken)/last(round_tot),team=last(attackerTeam),strafing=sum(attackerStrafe==TRUE)/n())
+
+#team stat on flash 
+flashes
+team_flashes <- flashes %>% filter(attackerTeam!=playerTeam) %>%  group_by(match_id,attackerTeam) %>% summarise(avg_flash_duration=sum(flashDuration)/last(round_tot),team=last(attackerTeam))
+
+#team stats for grenades
+team_grenades <- grenades  %>% rename(attackerTeam=throwerTeam) %>%   group_by(match_id,attackerTeam) %>% summarise(grenades_per_round=n()/last(round_tot),team=last(attackerTeam),smokes_per_round=sum("Smoke Grenade"==grenadeType)/last(round_tot),attack_grenades_round=sum("Smoke Grenade"!=grenadeType)/last(round_tot))
+
+#join everything
+team_killsstat <- inner_join(team_kills,wins) %>% inner_join(team_damages) %>% inner_join(team_flashes) %>%  inner_join(team_grenades)  
+
+
+#create y axis score difference data
+team_killsstat <- team_killsstat %>% mutate(relative_score_diff=if_else(winner!=attackerTeam,-score_diff,score_diff))
+
+
+library(reshape2)
+
+df.mlt <- melt(team_killsstat,  variable.name="var",id.vars=c("relative_score_diff","score_diff","match_id","attackerTeam","kills_tot","team","winner","looser","final_score_winner","final_score_looser","team1","team2","round_tot"))
+df.mlt <- df.mlt %>% mutate(yvalue=as.double(value)) 
+df.mlt <-  df.mlt %>% group_by(var) %>% 
+    mutate(pvalue= cor(yvalue, relative_score_diff)) %>% ungroup() %>% mutate(label_names=paste(as.character(var),strtrim(as.character(pvalue), 5)), sep = " ", collapse = NULL) %>% mutate(label_names=fct_reorder(label_names, -pvalue))
+
+which(cor_tests["var"] == 1578, arr.ind=TRUE)
+mylabeller <- function(variable,value){
+  return(cor_tests[value])
+}
+
+df.mlt %>% ggplot(aes(x=yvalue, y=relative_score_diff))+
+  #geom_smooth(method = "lm", se = FALSE) +
+  geom_point(size = .15) +
+  geom_smooth(method='lm', formula = y~x, colour='red')+
+  #geom_text(, aes(x = 3, y = 0, label = paste(" ",pvalue), family = "serif"), color = 'blue',  parse = TRUE)+
+  facet_wrap(~label_names, scales = "free") +
+  xlab("Team stat") +
+  ylab("relative score diff") +
+  ylim(-2, 4)+
+  theme_linedraw()
+
+#id.vars=c("kpr", "hs_percent","blinded_percent","first_kill_percent","trade_percent")
+```
+```{r}
+grenades <- jsonlite::fromJSON("data/ALL_grenades.json", simplifyVector = TRUE)
+
+grenades
+
+
+
+
+team_grenades
+```
+
+# player id and name association (name vary over time so we have to use id (attackerSteamID) to refer to a player)
+```{r}
+steamid <- match  %>%  group_by(attackerSteamID) %>% summarise(Name=last(attackerName))
+steamid
+```
+
+
