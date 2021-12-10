@@ -180,21 +180,78 @@ geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, vjust =
 
 ```{r}
 #heatmpas
-kills
 
-heat_kills <- kills %>%  filter(map_name == "de_mirage") %>% filter(match_event=="StarLadder Major Berlin 2019" )
+
+
 library(ggpubr)
-library(ggimage)
-img <- readJPEG("maps/de_mirage_light.jpeg")
+library(jpeg)
+library(gganimate)
+img <- readJPEG("maps/de_mirage_light.jpg")
 
+
+
+heat_kills <- damages %>%  filter(map_name == "de_mirage") %>% filter(match_event=="StarLadder Major Berlin 2019" )
 # Area + contour
 ggplot(heat_kills, aes(x=attackerX, y=attackerY) )+
-background_image(img,alpha=0.5) +
+background_image(img) +
 #geom_point(alpha=0.2,color="red")+
-stat_density_2d(aes(fill = ..level..), geom = "polygon",alpha=0.5,h=500)+ scale_fill_continuous(type = "viridis")+
+stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=294.1)+ scale_fill_continuous(type = "viridis")+
   xlim(-3050, 1700)+
   ylim(-3200,1520) + theme(aspect.ratio=1)
 
 
+
+heat_kills <- heat_kills %>%  filter(match_id=="12 liquid-vs-north-m1-mirage")
+g3 <- ggplot(heat_kills, aes(x=attackerX, y=attackerY) )+
+background_image(img) +
+#geom_point(alpha=0.2,color="red")+
+stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=500)+ scale_fill_continuous(type = "viridis")+
+  xlim(-3050, 1700)+
+  ylim(-3200,1520) + theme(aspect.ratio=1)+
+  #gganimate
+  #labs(title = 'round: {round_num}') +
+  transition_states(round_num,
+                    transition_length = 0,
+                    state_length = 1)
+
+  
+   
+library(transformr)
+# Save at gif:
+animate(g3,duration = 30, fps = 6,  renderer = gifski_renderer(),end_pause=10)
+anim_save("mirage.gif")
+
+
+
+```
+```{r}
+
+heat_kills <- damages %>%  filter(map_name == "de_mirage" ) %>% filter(attackerSteamID==76561198034202275) %>% filter(weapon=="AWP") %>% filter(attackerSide =="CT"
+)
+heat_kills
+# Area + contour
+ggplot(heat_kills, aes(x=victimX, y=victimY) )+
+background_image(img) +
+#geom_point(alpha=0.2,color="red")+
+stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=294.1)+ scale_fill_continuous(type = "viridis")+
+  xlim(-3050, 1700)+
+  ylim(-3200,1520) + theme(aspect.ratio=1)
+
+heat_kills <- damages %>%  filter(map_name == "de_mirage" ) %>% filter(attackerSteamID==76561198034202275) %>% filter(weapon=="AWP") %>% filter(attackerSide =="T"
+)
+heat_kills
+# Area + contour
+ggplot(heat_kills, aes(x=victimX, y=victimY) )+
+background_image(img) +
+#geom_point(alpha=0.2,color="red")+
+stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=294.1)+ scale_fill_continuous(type = "viridis")+
+  xlim(-3050, 1700)+
+  ylim(-3200,1520) + theme(aspect.ratio=1)
+# SIMPLE's damages with the AWP weapon
+```
+
+```{r}
+most_played <- kills %>%  group_by(match_id ) %>%  summarize( attackerSteamID=last(attackerSteamID),attackerName=last(attackerName) ) %>% group_by(attackerSteamID) %>% summarize(name=last(attackerName),match_count=n())
+most_played[order(most_played$match_count, decreasing=TRUE), ] %>% top_n(30)
 ```
 
