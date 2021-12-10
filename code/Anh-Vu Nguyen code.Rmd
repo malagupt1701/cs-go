@@ -32,22 +32,24 @@ flashes <- jsonlite::fromJSON("data/ALL_flashes.json", simplifyVector = TRUE)
 
 
 ```{r}
-library(dplyr)
+library(tidyverse)
 
 wins <- kills %>% group_by(match_id) %>% summarise(round_tot=last(round_tot)+1,team1=last(match_team1),team2=last(match_team2),winner=last(round_won_by),looser=if_else(last(round_won_by)!=last(match_team1),last(match_team1),last(team2)))
 
 wins <- wins %>%  mutate(final_score_winner=if_else(round_tot<31,16, 19+3*(  (round_tot-31)%/%6))) %>%  mutate(final_score_looser=round_tot-final_score_winner) %>% mutate(score_diff=(final_score_winner-final_score_looser)/round_tot)
 wins
                
-             
+kills
+players <- kills %>% group_by(match_event,attackerSteamID)   %>%  summarise(name=last(attackerName),team=last(attackerTeam),date=last(match_date),event=last(match_event)  )
+players
 ```
+
 
 Team stats
 
 kills
 
 ```{r}
-kills
 #team stats on kills
 team_kills <- kills %>% filter(attackerTeam!=victimTeam) %>%  group_by(match_id,attackerTeam) %>% summarise(kills_tot=n(),kpr=n()/last(round_tot),team=last(attackerTeam),hs_percent= sum(isHeadshot==TRUE)/n(),blinded_percent=sum(attackerBlinded==TRUE)/n(),blinded_percent=sum(victimBlinded==TRUE)/n(),first_kill_percent=sum(isFirstKill==TRUE)/last(round_tot),first_kill_percent=sum(isFirstKill==TRUE)/last(round_tot),non_traded_percent=sum(isTrade==FALSE)/n(),assist_percent= sum(!is.na(assisterTeam))/last(round_tot))
 
@@ -71,8 +73,9 @@ team_killsstat <- inner_join(team_kills,wins) %>% inner_join(team_damages) %>% i
 team_killsstat <- team_killsstat %>% mutate(relative_score_diff=if_else(winner!=attackerTeam,-score_diff,score_diff))
 
 
-library(reshape2)
 
+library(reshape2)
+library(forcats)
 df.mlt <- melt(team_killsstat,  variable.name="var",id.vars=c("relative_score_diff","score_diff","match_id","attackerTeam","kills_tot","team","winner","looser","final_score_winner","final_score_looser","team1","team2","round_tot"))
 df.mlt <- df.mlt %>% mutate(yvalue=as.double(value)) 
 df.mlt <-  df.mlt %>% group_by(var) %>% 
@@ -95,22 +98,48 @@ df.mlt %>% ggplot(aes(x=yvalue, y=relative_score_diff))+
   theme_linedraw()
 
 #id.vars=c("kpr", "hs_percent","blinded_percent","first_kill_percent","trade_percent")
+
 ```
 ```{r}
-grenades <- jsonlite::fromJSON("data/ALL_grenades.json", simplifyVector = TRUE)
+team_killsstat
+fit <- lm(relative_score_diff ~ kpr + adr + first_kill_percent + grenades_per_round + attack_grenades_round + smokes_per_round + assist_percent + non_traded_percent + avg_flash_duration, data=team_killsstat)
+summary(fit)
 
-grenades
+coef <- coefficients(fit)
+team_killsstat %>% mutate(rating=100*(coef[1]+kpr*coef[2]+adr*coef[3]+first_kill_percent*coef[4]+grenades_per_round *coef[5]+attack_grenades_round*coef[6]+assist_percent*coef[8]+non_traded_percent*coef[9]+avg_flash_duration *coef[10]))
 
-
-
-
-team_grenades
 ```
 
-# player id and name association (name vary over time so we have to use id (attackerSteamID) to refer to a player)
 ```{r}
-steamid <- match  %>%  group_by(attackerSteamID) %>% summarise(Name=last(attackerName))
-steamid
-```
 
+player_kills <- kills %>% filter(attackerTeam!=victimTeam) %>%  group_by(match_id,attackerSteamID) %>% summarise(kills_tot=n(),kpr=n()/last(round_tot),team=last(attackerTeam),hs_percent= sum(isHeadshot==TRUE)/n(),blinded_percent=sum(attackerBlinded==TRUE)/n(),blinded_percent=sum(victimBlinded==TRUE)/n(),first_kill_percent=sum(isFirstKill==TRUE)/last(round_tot),first_kill_percent=sum(isFirstKill==TRUE)/last(round_tot),non_traded_percent=sum(isTrade==FALSE)/n(),assist_percent= sum(!is.na(assisterTeam))/last(round_tot))
+
+#player stats on  damages
+player_damages <- damages %>% filter(attackerTeam!=victimTeam) %>%  group_by(match_id,attackerSteamID) %>% summarise(adr=sum(hpDamageTaken)/last(round_tot),team=last(attackerTeam),strafing=sum(attackerStrafe==TRUE)/n())
+
+#player stat on flash 
+
+player_flashes <- flashes %>% filter(attackerTeam!=playerTeam) %>%  group_by(match_id,attackerSteamID) %>% summarise(avg_flash_duration=sum(flashDuration)/last(round_tot),team=last(attackerTeam))
+
+#player stats for grenades
+
+player_grenades <- grenades  %>% rename(attackerSteamID=throwerSteamID) %>%   group_by(match_id,attackerSteamID) %>% summarise(grenades_per_round=n()/last(round_tot),smokes_per_round=sum("Smoke Grenade"==grenadeType)/last(round_tot),attack_grenades_round=sum("Smoke Grenade"!=grenadeType)/last(round_tot),name=last(throwerName),event=last(match_event),date=last(match_date))
+
+#join everything
+playerstat <- player_kills %>% inner_join(player_damages) %>% inner_join(player_flashes) %>%  inner_join(player_grenades)  %>% mutate(rating=100*(coef[1]+kpr*coef[2]+adr*coef[3]+first_kill_percent*coef[4]+grenades_per_round *coef[5]+attack_grenades_round*coef[6]+assist_percent*coef[8]+non_traded_percent*coef[9]+avg_flash_duration *coef[10]))
+
+playerstat <- playerstat %>% mutate(rating=100*(rating-min(rating))/(max(rating)-min(rating)))
+
+playerstat <- playerstat %>%  filter(!is.na(rating)) %>% group_by(attackerSteamID) %>%  summarize(name=last(name),rating=mean(rating),match_played=n())
+oldplayers <- playerstat[order(playerstat$match_played, decreasing=TRUE), ] %>% top_n(10)
+
+as.factor(oldplayers["name"])
+```
+```{r}
+playerstat_time <- player_kills %>% inner_join(player_damages) %>% inner_join(player_flashes) %>%  inner_join(player_grenades)  %>% mutate(rating=100*(coef[1]+kpr*coef[2]+adr*coef[3]+first_kill_percent*coef[4]+grenades_per_round *coef[5]+attack_grenades_round*coef[6]+assist_percent*coef[8]+non_traded_percent*coef[9]+avg_flash_duration *coef[10]))
+
+playerstat_time <- playerstat_time %>% mutate(rating=100*(rating-min(rating))/(max(rating)-min(rating)))
+playerstat_time <- playerstat_time %>% group_by(event,attackerSteamID) %>%  summarize(name=last(name),rating=mean(rating),match_played=n(),date=last(date))
+playerstat_time <- filter(name)
+```
 
