@@ -75,7 +75,7 @@ team_killsstat <- inner_join(team_kills,wins) %>% inner_join(team_damages) %>% i
 
 #create y axis score difference data
 team_killsstat <- team_killsstat %>% mutate(relative_score_diff=if_else(winner!=attackerTeam,-score_diff,score_diff))
-
+#WAEL
 
 
 library(reshape2)
@@ -133,8 +133,12 @@ player_grenades <- grenades  %>% rename(attackerSteamID=throwerSteamID) %>%   gr
 #join everything
 playerstat <- player_kills %>% inner_join(player_damages) %>% inner_join(player_flashes) %>%  inner_join(player_grenades)  %>% mutate(rating=100*(coef[1]+kpr*coef[2]+adr*coef[3]+first_kill_percent*coef[4]+grenades_per_round *coef[5]+attack_grenades_round*coef[6]+assist_percent*coef[8]+non_traded_percent*coef[9]+avg_flash_duration *coef[10]))
 
+
 playerstat <- playerstat %>% mutate(rating=100*(rating-min(rating))/(max(rating)-min(rating)))
-playerstat
+playerstat #WAEL #chaque match
+
+
+
 playerstat <- playerstat %>%  filter(!is.na(rating)) %>% group_by(attackerSteamID) %>%  summarize(name=last(name),rating=mean(rating),match_played=n())
 playerstat %>% filter(name=="ZywOo")
 
@@ -251,6 +255,7 @@ stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=294.1
 ```
 
 ```{r}
+kills
 most_played <- kills %>%  group_by(match_id ) %>%  summarize( attackerSteamID=last(attackerSteamID),attackerName=last(attackerName) ) %>% group_by(attackerSteamID) %>% summarize(name=last(attackerName),match_count=n())
 most_played[order(most_played$match_count, decreasing=TRUE), ] %>% top_n(30)
 ```
