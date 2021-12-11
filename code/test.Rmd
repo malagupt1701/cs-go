@@ -1,7 +1,15 @@
+
+
+```{r}
+library(jsonlite)
+library(tidyverse)
+kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
 wins <- kills %>%  filter(attackerTeam!=victimTeam) %>%  group_by(match_id,round_num) %>% summarise(map=last(map_name),T_team=last(if_else(attackerSide=="T","T","CT")))
 wins
 
 most_played <- kills %>%  group_by(match_id ) %>%   summarise(attackerSteamID=last(attackerSteamID),attackerName=last(attackerName) ) %>% group_by(attackerSteamID) %>% summarise(match_count= n() , name=last(attackerName))
-most_played[order(most_played$match_count, decreasing=TRUE), ] %>% top_n(30)
+most_played <- most_played[order(most_played$match_count, decreasing=TRUE), ] %>% top_n(30)
 
-most_played
+
+```
+
