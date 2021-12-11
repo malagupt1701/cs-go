@@ -49,6 +49,7 @@ players
 ```
 
 
+
 Team stats
 
 kills
@@ -67,7 +68,7 @@ flashes
 team_flashes <- flashes %>% filter(attackerTeam!=playerTeam) %>%  group_by(match_id,attackerTeam) %>% summarise(avg_flash_duration=sum(flashDuration)/last(round_tot),team=last(attackerTeam))
 
 #team stats for grenades
-team_grenades <- grenades  %>% rename(attackerTeam=throwerTeam) %>%   group_by(match_id,attackerTeam) %>% summarise(grenades_per_round=n()/last(round_tot),team=last(attackerTeam),smokes_per_round=sum("Smoke Grenade"==grenadeType)/last(round_tot),attack_grenades_round=sum("Smoke Grenade"!=grenadeType)/last(round_tot))
+team_grenades <- grenades  %>% rename(attackerTeam=throwerTeam) %>%   group_by(match_id,attackerTeam) %>% summarise(grenades_per_round=n()/last(round_tot),team=last(attackerTeam),smokes_per_round=sum("Smoke Grenade"==grenadeType)/last(round_tot),attack_grenades_round=sum("Smoke Grenade"!=grenadeType)/last(round_tot),event=last(match_event))
 
 #join everything
 team_killsstat <- inner_join(team_kills,wins) %>% inner_join(team_damages) %>% inner_join(team_flashes) %>%  inner_join(team_grenades)  
@@ -80,7 +81,7 @@ team_killsstat <- team_killsstat %>% mutate(relative_score_diff=if_else(winner!=
 
 library(reshape2)
 library(forcats)
-df.mlt <- melt(team_killsstat,  variable.name="var",id.vars=c("relative_score_diff","score_diff","match_id","attackerTeam","kills_tot","team","winner","looser","final_score_winner","final_score_looser","team1","team2","round_tot"))
+df.mlt <- melt(team_killsstat,  variable.name="var",id.vars=c("relative_score_diff","score_diff","match_id","attackerTeam","kills_tot","team","winner","looser","final_score_winner","final_score_looser","team1","team2","round_tot","event"))
 df.mlt <- df.mlt %>% mutate(yvalue=as.double(value)) 
 df.mlt <-  df.mlt %>% group_by(var) %>% 
     mutate(pvalue= cor(yvalue, relative_score_diff)) %>% ungroup() %>% mutate(label_names=paste(as.character(var),strtrim(as.character(pvalue), 5)), sep = " ", collapse = NULL) %>% mutate(label_names=fct_reorder(label_names, -pvalue))
@@ -106,14 +107,44 @@ df.mlt %>% ggplot(aes(x=yvalue, y=relative_score_diff))+
 ```
 ```{r}
 # new stat generation
-team_killsstat
+
 fit <- lm(relative_score_diff ~ kpr + adr + first_kill_percent + grenades_per_round + attack_grenades_round + smokes_per_round + assist_percent + non_traded_percent + avg_flash_duration, data=team_killsstat)
 summary(fit)
 
 coef <- coefficients(fit)
 team_killsstat %>% mutate(rating=100*(coef[1]+kpr*coef[2]+adr*coef[3]+first_kill_percent*coef[4]+grenades_per_round *coef[5]+attack_grenades_round*coef[6]+assist_percent*coef[8]+non_traded_percent*coef[9]+avg_flash_duration *coef[10]))
 
+
+team_killsstat <- team_killsstat %>% mutate(rating=100*(coef[1]+kpr*coef[2]+adr*coef[3]+first_kill_percent*coef[4]+grenades_per_round *coef[5]+attack_grenades_round*coef[6]+assist_percent*coef[8]+non_traded_percent*coef[9]+avg_flash_duration *coef[10])) %>%  mutate(rating=100*(rating-min(rating))/(max(rating)-min(rating)))
+
 ```
+Top teams for each event
+
+```{r  fig.height=8}
+top_teams <- team_killsstat %>% group_by(team,event) %>% summarize(rating=mean(rating)) %>% filter( !is.nan(rating) ,rating!=0) 
+
+
+level_order <- c('DreamHack Winter 2013','EMS One Katowice 2014','ESL One Cologne 2014','DreamHack Winter 2014','ESL One Katowice 2015','ESL One Cologne 2015','DreamHack Open Cluj-Napoca 2015','MLG Columbus 2016','ESL One Cologne 2016','ELEAGUE Major 2017','PGL Major Krakow 2017','ELEAGUE Major 2018','FACEIT Major 2018','IEM Katowice 2019','StarLadder Major Berlin 2019')
+top_teams <- top_teams %>% mutate(winner= (team=="Fnatic" & event=="ESL One Cologne 2015")| (team=="Team EnVyUs" & event=="DreamHack Open Cluj-Napoca 2015") |  (team=="Luminosity Gaming" & event=="MLG Columbus 2016") | (team=="SK Gaming" & event=="ESL One Cologne 2016") | (team=="Gambit Gaming" & event=="PGL Major Krakow 2017") |(team=="Cloud9" & event=="ELEAGUE Major 2018") | ((team=='Astralis')&(event %in% c("StarLadder Major Berlin 2019","FACEIT Major 2018","IEM Katowice 2019","ELEAGUE Major 2017"))))
+
+
+top_teams
+reorder_within <- function(x, by, within, fun = mean, sep = "___", ...) {
+  new_x <- paste(x, within, sep = sep)
+  stats::reorder(new_x, by, FUN = fun)
+}
+scale_x_reordered <- function(..., sep = "___") {
+  reg <- paste0(sep, ".+$")
+  ggplot2::scale_x_discrete(labels = function(x) gsub(reg, "", x), ...)
+}
+
+ggplot(data=top_teams, aes(x=reorder_within(team,-rating,event), y=rating,color=winner)) +
+facet_wrap(~factor(event,levels=level_order), scales = "free") +
+scale_x_reordered() +
+geom_bar(stat="identity")+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+
 
 ```{r}
 #all time player stats
@@ -252,6 +283,46 @@ stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=294.1
   xlim(-3050, 1700)+
   ylim(-3200,1520) + theme(aspect.ratio=1)
 # SIMPLE's damages with the AWP weapon
+
+
+
+
+heat_kills <- damages %>%  filter(map_name == "de_mirage" ) %>%  filter(weapon=="AWP") %>% filter(attackerSide =="CT")
+
+ggplot(heat_kills, aes(x=victimX, y=victimY) )+
+background_image(img) +
+#geom_point(alpha=0.2,color="red")+
+stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=294.1)+ scale_fill_continuous(type = "viridis")+
+  geom_segment(aes(xend=attackerX, yend=attackerY),alpha=0.05)+
+  xlim(-3050, 1700)+
+  ylim(-3200,1520) + theme(aspect.ratio=1)
+# amages with the AWP weapon
+
+damages
+
+
+```
+```{r}
+ggplot(heat_kills, aes(x=attackerX, y=attackerY) )+
+background_image(img) +
+#geom_point(alpha=0.2,color="red")+
+stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=400)+ scale_fill_continuous(type = "viridis")+
+    geom_segment(aes(xend=victimX, yend=victimY),alpha=0.05)+
+  xlim(-3050, 1700)+
+  ylim(-3200,1520) + theme(aspect.ratio=1)
+# amages with the AWP weapon
+
+damages
+heat_kills <- damages %>%  filter(map_name == "de_mirage" ) %>%  filter(weapon=="M4A4") %>% filter(attackerSide =="CT")
+
+ggplot(heat_kills, aes(x=attackerX, y=attackerY) )+
+background_image(img) +
+#geom_point(alpha=0.2,color="red")+
+stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=250)+ scale_fill_continuous(type = "viridis")+
+    geom_segment(aes(xend=victimX, yend=victimY),alpha=0.01)+
+  xlim(-3050, 1700)+
+  ylim(-3200,1520) + theme(aspect.ratio=1)
+# amages with the AWP weapon
 ```
 
 ```{r}
