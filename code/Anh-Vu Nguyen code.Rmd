@@ -33,7 +33,16 @@ flashes <- jsonlite::fromJSON("data/ALL_flashes.json", simplifyVector = TRUE)
 
 ```{r}
 kills
+wins <- kills %>%  filter(attackerTeam!=victimTeam) %>%  group_by(match_id,round_num) %>% summarise(map=last(map_name),T_team=last(if_else(attackerSide=="T","T","CT")))
+
+most_played <- kills %>%  group_by(match_id ) %>%  summarize( attackerSteamID=last(attackerSteamID),attackerName=last(attackerName) ) %>% group_by(attackerSteamID) %>% summarize(name=last(attackerName),match_count=n())
+most_played[order(most_played$match_count, decreasing=TRUE), ] %>% top_n(30)
+
+wins <- kills %>%  filter(attackerTeam!=victimTeam) %>%  group_by(match_id,round_num) %>% summarise(map=last(map_name),winner=last(round_won_by),T_team=last(if_else(attackerSide=="T",attackerTeam,victimTeam)))
+
+wins
 ```
+
 
 ```{r}
 
