@@ -61,11 +61,11 @@ weapon_usage <- damages %>% group_by(match_id,attackerSteamID,weapon,round_num) 
 
 weapon_usage
 weapon_usage <- weapon_usage %>% group_by(event,weapon) %>% summarize(weapon=last(weapon),weapon_usage=n(),date=last(date),event=last(event),side=last(side))
-math_per_event <- damages %>%  group_by(match_id,match_event) %>% summarize(nothoing=n()) %>% group_by(match_event) %>% summarize(event=last(match_event),count=n())
+tot_count <- weapon_usage %>%  group_by(event) %>% summarize(tot_usage=sum(weapon_usage))
 
 
 weapon_list <- c("AK-47",'SG 553','M4A4','M4A4','M4A1')
-weapon_usage <- weapon_usage %>% inner_join(math_per_event) %>%  mutate(weapon_percent=weapon_usage/count)
+weapon_usage <- weapon_usage %>% inner_join(tot_count) %>%  mutate(weapon_percent=weapon_usage/tot_usage)
 weapon_usage
 ggplot(weapon_usage %>% filter( (weapon %in% weapon_list)) , aes(x = reorder(weapon,-weapon_percent) , y = weapon_percent)) +
 geom_bar(stat = "identity" , color = "blue", fill = "lightblue")  + labs(x="Weapon") +
@@ -109,5 +109,24 @@ geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, vjust =
 
 library(patchwork)
 (a/b/c)
+
+
+
+```
+```{r}
+
+smgs <-  c("UMP-45",'MAC-10','MP7','MP9','P90','MP5-SD')
+rifles <- c("AK-47",'SG 553','AUG','M4A4','M4A1','FAMAS','Galil AR')
+pistols <- c("CZ75 Auto",'Desert Eagle','Five-SeveN','p250','Tec-9',"Dual Berettas","Glock-18","P2000","USP-S")
+snipers <- c("AWP",'G3SG1',"SCAR-20","SSG 08")
+
+
+#add weapon category 
+weapon_usage <- weapon_usage %>% mutate(category=if_else(weapon %in% smgs ,"smg",if_else(weapon %in% rifles ,"rifles",if_else(weapon %in% pistols ,"pistols","snipers")))) %>% filter(!is.na(side))
+
+category_usage <- weapon_usage %>%  group_by(category,event) %>% summarise(tot_usage=last(tot_usage),category_usage=sum(weapon_usage)/last(tot_usage))
+ ggplot(category_usage, aes(x = factor(event, level = level_order), y = category_usage, group=category, col=category))+ 
+geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
 ```
 
