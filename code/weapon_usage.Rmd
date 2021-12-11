@@ -1,0 +1,51 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+#Data Pre processing to order by Year
+
+```{r}
+damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
+damages$match_date <- as.numeric(damages$match_date)/1000
+damages$match_date <- year(as.Date(as.POSIXct(as.numeric(as.character(damages$match_date)),tz = "GMT", origin = "1960-01-01")))
+drop <- c('match_date','weapon')
+data = damages[,(names(damages) %in% drop)]
+set <- data %>% group_by(match_date, weapon) %>% summarise(Count = n()) %>% arrange(desc(match_date), desc(Count))
+
+```
+
+#Bar plots for each year representing the top five weapon usage for that year
+
+```{r,fig.height=10,fig.width=12}
+library(patchwork)
+
+year2009 = filter(set , match_date==2009)[1:5 ,]
+year2008 = filter(set , match_date==2008)[1:5 ,]
+year2007 = filter(set , match_date==2007)[1:5 ,]
+year2006 = filter(set , match_date==2006)[1:5 ,]
+year2005 = filter(set , match_date==2005)[1:5 ,]
+
+
+year2009G <- ggplot(year2009, aes(x = reorder(weapon,-Count) , y = Count)) +
+     geom_bar(stat = "identity" , color = "blue", fill = "lightblue")  + labs(x="Weapon") +
+     ggtitle("Most popular weapons in the year 2009") 
+
+year2008G <- ggplot(year2008, aes(x = reorder(weapon,-Count) , y = Count)) +
+     geom_bar(stat = "identity" , color = "blue", fill = "lightblue") + labs(x="Weapon") +
+        ggtitle("Most popular weapons in the year 2008") 
+year2007G <-  ggplot(year2007, aes(x = reorder(weapon,-Count) , y = Count)) +
+     geom_bar(stat = "identity",color = "blue", fill = "lightblue") + labs(x="Weapon")+
+        ggtitle("Most popular weapons in the year 2007") 
+year2006G <- ggplot(year2006, aes(x = reorder(weapon,-Count) , y = Count)) +
+     geom_bar(stat = "identity",color = "blue", fill = "lightblue") + labs(x="Weapon")+
+        ggtitle("Most popular weapons in the year 2006") 
+year2005G <- ggplot(year2005, aes(x = reorder(weapon,-Count) , y = Count)) +
+     geom_bar(stat = "identity",color = "blue", fill = "lightblue") + labs(x="Weapon")+
+        ggtitle("Most popular weapons in the year 2005") 
+
+
+(year2005G + year2006G +year2007G)/(year2008G+year2009G)
+
+ 
+```
