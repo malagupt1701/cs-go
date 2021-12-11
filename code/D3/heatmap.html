@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v7.js"></script>
+
+<!-- Create a div where the graph will take place -->
+<div id="myheatmap"></div>
+<style type="text/css">
+
+	
+</style>
+
+<script>
+// FOR EACH EVENT, HEAT MAP OF EACH PLAYER IN TOP N, 
+// set the dimensions and margins of the graph
+const margin = {top: 10, right: 30, bottom: 30, left: 40},
+width = 460 - margin.left - margin.right,
+height = 400 - margin.top - margin.bottom;
+
+
+
+
+function show_heatmap(show_points,attacker_pov){
+	// append the svg object to the body of the page
+	var svg = d3.select("#myheatmap")
+	.append("svg")
+	.attr("id", "heatmap_svg") 
+	.attr("width", width + margin.left + margin.right)
+	.attr("height", height + margin.top + margin.bottom)
+	.append("g")
+	.attr("transform", `translate(${margin.left},${margin.top})`);
+
+	// READ DATA
+	d3.csv("./csv/test.csv").then( function(data) {
+
+	  // Add X axis range
+	  var x = d3.scaleLinear()
+	  .domain([-3050, 1500])
+	  .range([ margin.left, width - margin.right ]);
+
+
+
+	  // Add Y axis same range
+	  var y = d3.scaleLinear()
+	  .domain([-3050,1500])
+	  .range([ height - margin.bottom, margin.top ]);
+
+
+	  
+	  // compute the density data
+	  if(attacker_pov){ // attacker position data
+	  	var densityData = d3.contourDensity()
+	  	.x(function(d) { return x(d.attackerX); })
+	  	.y(function(d) { return y(d.attackerY); })
+	  	.size([width, height])
+	  	.bandwidth(9)
+	  	(data)
+	  }
+	  else{ //victim position data
+	  	var densityData = d3.contourDensity()
+	  	.x(function(d) { return x(d.victimX); })
+	  	.y(function(d) { return y(d.victimY); })
+	  	.size([width, height])
+	  	.bandwidth(9)
+	  	(data)
+	  }
+
+	  //console.log(densityData)
+
+	  //Max density value calculated, used to get the color value range 
+	  var max_density=0
+	  for (let i = 0; i < densityData.length; i++) {
+	  	if(max_density<densityData[i].value){
+	  		max_density=densityData[i].value
+	  	}
+	  }
+	  //console.log(max_density);
+
+	   // Prepare a color palette range values
+	   var color = d3.scaleLinear()
+	      .domain([0, max_density]) /
+	      .range(["#ffef0002", "#DA2F1B"]);//yellow to red
+
+
+
+
+	 // Add dots
+	 if(show_points){
+	 	if(attacker_pov){//attacker position data
+	 		svg.append('g')
+	 		.selectAll("dot")
+	 		.data(data)
+	 		.enter()
+	 		.append("circle")
+	 		.attr("cx", function (d) { return x(d.attackerX); } )
+	 		.attr("cy", function (d) { return y(d.attackerY); } )
+	 		.attr("r", 1.5)
+	 		.style("fill", "#000000")
+	 		.attr('opacity', 0.3)
+	 		.attr('fill-opacity', 0.3);
+	 	}
+	 	else{ //victim position data
+	 		svg.append('g')
+	 		.selectAll("dot")
+	 		.data(data)
+	 		.enter()
+	 		.append("circle")
+	 		.attr("cx", function (d) { return x(d.victimX); } )
+	 		.attr("cy", function (d) { return y(d.victimY); } )
+	 		.attr("r", 1.5)
+	 		.style("fill", "#000000")
+	 		.attr('opacity', 0.3)
+	 		.attr('fill-opacity', 0.3);
+	 	}
+	 }
+
+
+	 //change from linear scaling to custom scaling
+	 function scaling_func(dens){
+	 	function func(dens){ // scaling function, has to start at 0 ie func(0)=0
+	 		return dens*dens*dens;
+	 	}
+	 	return func(dens)*max_density/func(max_density);
+	 }
+
+	 //add 2D density to svg 
+	 svg.insert("g", "g")
+	 .selectAll("path")
+	 .data(densityData)
+	 .enter().append("path")
+	 .attr("d", d3.geoPath())
+	 .attr("fill", function(d) { return color(scaling_func(d.value)); })
+	 .attr('opacity',1);
+
+	 // add background map image
+	 var g = svg.append("g");
+	 var img = g.append('svg:image')
+	 .attr('xlink:href', './maps/de_mirage_light.png')
+	 .attr("width", width*1.02)
+	 .attr("height", height*1.02)
+	 .attr("x", 10)
+	 .attr("y", -10)
+	 .attr('opacity',1)
+	 .attr("z-index", 1);
+	 g.lower();
+
+	})
+
+} // end of show_heatmap function
+</script>
+
+
+<p id="add">Add an element</p>
+
+<script type="text/javascript">
+	
+	d3.selectAll("p")
+	.on("click", function () {
+		var paraID = d3.select(this).attr("id");
+		if (paraID == "add") {
+			d3.select("#heatmap_svg").remove()
+
+			show_heatmap(true,false); //points,attacker
+		}
+	});
+
+</script>
