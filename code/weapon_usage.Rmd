@@ -6,7 +6,11 @@ output: html_notebook
 #Data Pre processing to order by Year
 
 ```{r}
-damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
+library(lubridate)
+library(jsonlite)
+library(tidyverse)
+damages_json <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
+
 damages$match_date <- as.numeric(damages$match_date)/1000
 damages$match_date <- year(as.Date(as.POSIXct(as.numeric(as.character(damages$match_date)),tz = "GMT", origin = "1960-01-01")))
 drop <- c('match_date','weapon')
@@ -49,3 +53,61 @@ year2005G <- ggplot(year2005, aes(x = reorder(weapon,-Count) , y = Count)) +
 
  
 ```
+```{r fig.height=10,fig.width=8}
+level_order <- c('DreamHack Winter 2013','EMS One Katowice 2014','ESL One Cologne 2014','DreamHack Winter 2014','ESL One Katowice 2015','ESL One Cologne 2015','DreamHack Open Cluj-Napoca 2015','MLG Columbus 2016','ESL One Cologne 2016','ELEAGUE Major 2017','PGL Major Krakow 2017','ELEAGUE Major 2018','FACEIT Major 2018','IEM Katowice 2019','StarLadder Major Berlin 2019')
+
+damages_json
+weapon_usage <- damages %>% group_by(match_id,attackerSteamID,weapon,round_num) %>% summarize(weapon=last(weapon),date=last(match_date),event=last(match_event),side=last(attackerSide),name=last(attackerName))
+
+weapon_usage
+weapon_usage <- weapon_usage %>% group_by(event,weapon) %>% summarize(weapon=last(weapon),weapon_usage=n(),date=last(date),event=last(event),side=last(side))
+math_per_event <- damages %>%  group_by(match_id,match_event) %>% summarize(nothoing=n()) %>% group_by(match_event) %>% summarize(event=last(match_event),count=n())
+
+
+weapon_list <- c("AK-47",'SG 553','M4A4','M4A4','M4A1')
+weapon_usage <- weapon_usage %>% inner_join(math_per_event) %>%  mutate(weapon_percent=weapon_usage/count)
+weapon_usage
+ggplot(weapon_usage %>% filter( (weapon %in% weapon_list)) , aes(x = reorder(weapon,-weapon_percent) , y = weapon_percent)) +
+geom_bar(stat = "identity" , color = "blue", fill = "lightblue")  + labs(x="Weapon") +
+facet_wrap(~factor(event,levels=level_order)) +
+ggtitle("Most popular T side weapons by events ") +
+geom_bar(stat="identity")+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+
+weapon_list <- c("CZ75 Auto",'Desert Eagle','Dual Berettas','Five-SeveN','p250','Tec-9')
+ggplot(weapon_usage %>% filter( (weapon %in% weapon_list)) , aes(x = reorder(weapon,-weapon_percent) , y = weapon_percent)) +
+geom_bar(stat = "identity" , color = "blue", fill = "lightblue")  + labs(x="Weapon") +
+facet_wrap(~factor(event,levels=level_order)) +
+ggtitle("Most popular T side weapons by events ") +
+geom_bar(stat="identity")+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+weapon_list <- c("UMP-45",'MAC-10','MP7','MP9','P90')
+ggplot(weapon_usage %>% filter( (weapon %in% weapon_list)) , aes(x = reorder(weapon,-weapon_percent) , y = weapon_percent)) +
+geom_bar(stat = "identity" , color = "blue", fill = "lightblue")  + labs(x="Weapon") +
+facet_wrap(~factor(event,levels=level_order)) +
+ggtitle("Most popular T side weapons by events ") +
+geom_bar(stat="identity")+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+
+weapon_list <- c("UMP-45",'MAC-10','MP7','MP9','P90')
+a <-  ggplot(weapon_usage %>% filter( (weapon %in% weapon_list)), aes(x = factor(event, level = level_order), y = weapon_percent, group=weapon, col=weapon))+ 
+geom_line() + geom_point()+ theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+weapon_list <- c("CZ75 Auto",'Desert Eagle','Five-SeveN','p250','Tec-9')
+b <- ggplot(weapon_usage %>% filter( (weapon %in% weapon_list)), aes(x = factor(event, level = level_order), y = weapon_percent, group=weapon, col=weapon))+ 
+geom_line() + geom_point()+ theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+weapon_list <- c("AK-47",'SG 553','AUG','M4A4','M4A1')
+c <- ggplot(weapon_usage %>% filter( (weapon %in% weapon_list)), aes(x = factor(event, level = level_order), y = weapon_percent, group=weapon, col=weapon))+ 
+geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+
+
+library(patchwork)
+(a/b/c)
+```
+
