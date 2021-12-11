@@ -4,12 +4,34 @@
 library(jsonlite)
 library(tidyverse)
 kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
-wins <- kills %>%  filter(attackerTeam!=victimTeam) %>%  group_by(match_id,round_num) %>% summarise(map=last(map_name),T_team=last(if_else(attackerSide=="T","T","CT")))
+kills
+wins <- kills %>%  filter(attackerTeam!=victimTeam) %>%  group_by(match_id,round_num) %>%  summarise(map=last(map_name),winner=last(round_won_by),T_team=last(if_else(attackerSide=="T",attackerTeam,victimTeam)),event=last(match_event),map=last(map_name))
+wins <- wins %>% mutate(win_side=if_else(winner==T_team,'T','CT'))
 wins
+global_wins <- wins %>% group_by(event) %>% summarise(event=last(event),tot=n(),T_percent=100*sum(win_side=='T')/n()) %>% mutate(CT_percent=100-T_percent)
+global_wins
 
-most_played <- kills %>%  group_by(match_id ) %>%   summarise(attackerSteamID=last(attackerSteamID),attackerName=last(attackerName) ) %>% group_by(attackerSteamID) %>% summarise(match_count= n() , name=last(attackerName))
-most_played <- most_played[order(most_played$match_count, decreasing=TRUE), ] %>% top_n(30)
+level_order <- c('DreamHack Winter 2013','EMS One Katowice 2014','ESL One Cologne 2014','DreamHack Winter 2014','ESL One Katowice 2015','ESL One Cologne 2015','DreamHack Open Cluj-Napoca 2015','MLG Columbus 2016','ESL One Cologne 2016','ELEAGUE Major 2017','PGL Major Krakow 2017','ELEAGUE Major 2018','FACEIT Major 2018','IEM Katowice 2019','StarLadder Major Berlin 2019')
 
+
+library(reshape2)
+gloabl_wins_melt <- melt(global_wins,  variable.name="var",id.vars=c("event","tot"))
+
+ggplot(gloabl_wins_melt, aes(x = factor(event, level = level_order), y = value, group=var, col=var))+ 
+geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+
+```
+```{r fig.height=7,fig.width=15}
+wins
+map_wins <- wins %>% group_by(event,map) %>% summarise(event=last(event),tot=n(),T_percent=100*sum(win_side=='T')/n()) %>% mutate(CT_percent=100-T_percent)
+map_wins
+
+map_wins_melt <- melt(map_wins,  variable.name="var",id.vars=c("event","tot","map"))
+
+ggplot(map_wins_melt, aes(x = factor(event, level = level_order), y = value, group=var, col=var))+ 
+facet_wrap(~map)+
+geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
 ```
 
