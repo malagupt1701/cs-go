@@ -112,6 +112,17 @@
 		stroke: steelblue;
 		stroke-width: 5px;
 	}
+	div.tooltip-donut {
+		position: absolute;
+		text-align: center;
+		padding: .5rem;
+		background: #FFFFFF;
+		color: #313639;
+		border: 1px solid #313639;
+		border-radius: 8px;
+		pointer-events: none;
+		font-size: 1.3rem;
+	}
 </style>
 
 <div class="row" id="all_buttons">
@@ -185,7 +196,9 @@ var glob_side="CT"
 //scaling for each map
 var mapXY={"de_mirage":{"x":[-3050, 1450],"y":[-3050,1550]},"de_inferno":{"x":[-2050, 2510],"y":[-790,3600]},"de_dust2":{"x":[-2310, 1630],"y":[-950,3000]},"de_overpass":{"x":[-4460, 250],"y":[-3150,1660]},"de_cache":{"x":[-1700, 2900],"y":[-2000,2950]},"de_nuke":{"x":[-2950, 3300],"y":[-3950,2550]},"de_train":{"x":[-2300, 1920],"y":[-2100,2200]},"de_vertigo":{"x":[-3450, 300],"y":[-2750,2450]}};
 
-
+var div = d3.select("body").append("div")
+.attr("class", "tooltip-donut")
+.style("opacity", 0);
 
 function show_heatmap(side){
 
@@ -298,7 +311,8 @@ function show_heatmap(side){
 	 .attr("y2", d=>y(d.victimY))
 	 .attr("stroke-width", 0.2)
 	 .attr("stroke", "black")
-	 .attr('opacity',show_traject);
+	 .attr('opacity',show_traject)
+
 
 	  //attacker points
 	  svg.append('g')
@@ -312,7 +326,37 @@ function show_heatmap(side){
 	  .attr("r", 1.5)
 	  .style("fill", "#026A5D")
 	  .attr('opacity', show_attacker)
-	  .attr('fill-opacity', 0.5);
+	  .attr('fill-opacity', 0.5)
+	  .on('mouseover', function (event,d, i) {
+	  	if(document.getElementById("switch_att").checked){
+	  		d3.select(this).transition()
+	  		.duration('200')
+	  		.attr('opacity', 1)
+	  		.attr('fill-opacity', 1)
+	  		.attr("r",2.5);
+	  		div.transition()
+	  		.duration(50)
+	  		.style("opacity", 1);
+
+	  		let num = "Attacker : "+d.attackerName+ "<br>"+"(Victim : "+d.victimName+") <br>Weapon: "+d.weapon;
+	  		div.html(num)
+	  		.style("left", (event.pageX + 10) + "px")
+	  		.style("top", (event.pageY - 15) + "px");
+	  	}
+	  })
+	  .on('mouseout', function (d, i) {
+	  	if(document.getElementById("switch_att").checked){
+	  		d3.select(this).transition()
+	  		.duration('100')
+	  		.attr('opacity', 0.5)
+	  		.attr('fill-opacity', 0.5)
+	  		.attr("r", 1.5);
+	  		div.transition()
+	  		.duration('50')
+	  		.style("opacity", 0);
+	  		
+	  	}
+	  });
 
 
 	  //victim position data
@@ -327,7 +371,36 @@ function show_heatmap(side){
 	  .attr("r", 1.5)
 	  .style("fill", "#C64444")
 	  .attr('opacity', show_victim)
-	  .attr('fill-opacity', 0.5);
+	  .attr('fill-opacity', 0.5).on('mouseover', function (event,d, i) {
+	  	if(document.getElementById("switch_vic").checked){
+	  		d3.select(this).transition()
+	  		.duration('200')
+	  		.attr('opacity', 1)
+	  		.attr('fill-opacity', 1)
+	  		.attr("r", 2.5);
+	  		div.transition()
+	  		.duration(50)
+	  		.style("opacity", 1);
+	  		
+	  		let num = "Victim : "+d.victimName+ "<br>"+"(Attacker : "+d.attackerName+")<br>Weapon: "+d.weapon;
+	  		div.html(num)
+	  		.style("left", (event.pageX + 10) + "px")
+	  		.style("top", (event.pageY - 15) + "px");
+	  	}
+	  })
+	  .on('mouseout', function (d, i) {
+	  	if(document.getElementById("switch_vic").checked){
+	  		d3.select(this).transition()
+	  		.duration('100')
+	  		.attr('opacity', 0.5)
+	  		.attr("r", 1.5)
+	  		.attr('fill-opacity', 0.5);
+	  		div.transition()
+	  		.duration('50')
+	  		.style("opacity", 0);
+	  		
+	  	}
+	  });
 
 	 // add background map image
 	 var g = svg.append("g");
