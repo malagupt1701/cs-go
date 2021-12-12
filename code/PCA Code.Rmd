@@ -1,0 +1,142 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## data lion drive link: https://drive.google.com/drive/folders/10wndQSJ15Pvd97XwZ32J_BSu3F-clxIQ?usp=sharing
+
+
+##Useful info for all rows
+
+"round_won_by": team that won the round
+ "match_id": "0 astralis-vs-cr4zy-m1-inferno" unique match identifier
+"map_name": name of map played
+ "round_num": number of the round from 1 to the last round
+"round_tot": total number of rounds in the match
+"match_event": unique event identifier ex "StarLadder Major Berlin 2019"
+"match_date": date of match in milliseconds
+"match_team1": name of a team
+"match_team2": name of the other team
+
+
+## This is how to load json files
+
+```{r}
+#This is how to load json files 
+library(jsonlite)
+library(tidyverse)
+grenades <- jsonlite::fromJSON("data/ALL_grenades.json", simplifyVector = TRUE)
+kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
+damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
+flashes <- jsonlite::fromJSON("data/ALL_flashes.json", simplifyVector = TRUE)
+```
+
+```{r}
+kills
+wins <- kills %>%  filter(attackerTeam!=victimTeam) %>%  group_by(match_id,round_num) %>% summarise(map=last(map_name),T_team=last(if_else(attackerSide=="T","T","CT")))
+
+most_played <- kills %>%  group_by(match_id ) %>%  summarize( attackerSteamID=last(attackerSteamID),attackerName=last(attackerName) ) %>% group_by(attackerSteamID) %>% summarize(name=last(attackerName),match_count=n())
+most_played[order(most_played$match_count, decreasing=TRUE), ] %>% top_n(30)
+
+wins <- kills %>%  filter(attackerTeam!=victimTeam) %>%  group_by(match_id,round_num) %>% summarise(map=last(map_name),winner=last(round_won_by),T_team=last(if_else(attackerSide=="T",attackerTeam,victimTeam)))
+
+wins
+```
+
+
+```{r}
+
+
+wins <- kills %>% group_by(match_id) %>% summarise(round_tot=last(round_tot)+1,team1=last(match_team1),team2=last(match_team2),winner=last(round_won_by),looser=if_else(last(round_won_by)!=last(match_team1),last(match_team1),last(team2)))
+
+wins <- wins %>%  mutate(final_score_winner=if_else(round_tot<31,16, 19+3*(  (round_tot-31)%/%6))) %>%  mutate(final_score_looser=round_tot-final_score_winner) %>% mutate(score_diff=(final_score_winner-final_score_looser)/round_tot)
+wins
+               
+kills
+players <- kills %>% group_by(match_event,attackerSteamID)   %>%  summarise(name=last(attackerName),team=last(attackerTeam),date=last(match_date),event=last(match_event)  )
+players
+```
+
+
+
+Team stats
+
+kills
+
+```{r}
+#team stats on kills
+team_kills <- kills %>% filter(attackerTeam!=victimTeam) %>%  group_by(match_id,attackerTeam) %>% summarise(kills_tot=n(),kpr=n()/last(round_tot),team=last(attackerTeam),hs_percent= sum(isHeadshot==TRUE)/n(),blinded_percent=sum(attackerBlinded==TRUE)/n(),blinded_percent=sum(victimBlinded==TRUE)/n(),first_kill_percent=sum(isFirstKill==TRUE)/last(round_tot),first_kill_percent=sum(isFirstKill==TRUE)/last(round_tot),non_traded_percent=sum(isTrade==FALSE)/n(),assist_percent= sum(!is.na(assisterTeam))/last(round_tot))
+
+team_kills
+
+#team stats on  damages
+team_damages <- damages %>% filter(attackerTeam!=victimTeam) %>%  group_by(match_id,attackerTeam) %>% summarise(adr=sum(hpDamageTaken)/last(round_tot),team=last(attackerTeam),strafing=sum(attackerStrafe==TRUE)/n())
+
+#team stat on flash 
+flashes
+team_flashes <- flashes %>% filter(attackerTeam!=playerTeam) %>%  group_by(match_id,attackerTeam) %>% summarise(avg_flash_duration=sum(flashDuration)/last(round_tot),team=last(attackerTeam))
+
+#team stats for grenades
+team_grenades <- grenades  %>% rename(attackerTeam=throwerTeam) %>%   group_by(match_id,attackerTeam) %>% summarise(grenades_per_round=n()/last(round_tot),team=last(attackerTeam),smokes_per_round=sum("Smoke Grenade"==grenadeType)/last(round_tot),attack_grenades_round=sum("Smoke Grenade"!=grenadeType)/last(round_tot),event=last(match_event))
+
+#join everything
+team_killsstat <- inner_join(team_kills,wins) %>% inner_join(team_damages) %>% inner_join(team_flashes) %>%  inner_join(team_grenades)  
+
+
+#create y axis score difference data
+team_killsstat <- team_killsstat %>% mutate(relative_score_diff=if_else(winner!=attackerTeam,-score_diff,score_diff))
+
+```
+
+
+
+
+PCA
+
+```{r}
+team_killsstat.pca <- prcomp(team_killsstat[,c(3,4,6:10,16:22,26)], center = TRUE,scale. = TRUE)
+
+summary(team_killsstat.pca)
+
+```
+```{r}
+library(cli)
+library(devtools)
+```
+
+
+```{r}
+install_github("vqv/ggbiplot")
+```
+
+```{r}
+library(ggbiplot)
+
+ggbiplot(team_killsstat.pca)
+```
+
+We rescale on the center of the graph (ignoring the one very far outliers) and color points so that teams that have won appear in a certain color, and teams that didn't appear in another color.
+
+
+```{r}
+team_killsstat$win <- ifelse(team_killsstat$relative_score_diff > 0, "win", "lose") 
+#This columns tells if the team won (1) or lost (0)
+```
+
+```{r}
+
+p <- ggbiplot(team_killsstat.pca, obs.scale = 1, var.scale = 1,circle=TRUE, groups=team_killsstat$win,varname.adjust = 1.45, alpha = 0.5)
+p <- p + xlim(-4.9, 3) + ylim(-3.1, 5)
+p
+```
+
+```{r}
+p2 <- ggbiplot(team_killsstat.pca, obs.scale = 2, var.scale = 0.1, varname.adjust = 1, alpha = 0)
+p2 <- p2 + xlim(-5, 3) + ylim(-5, 3)
+p2
+```
+```
+```{r}
+
+```
+
