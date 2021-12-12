@@ -1,4 +1,7 @@
 # Interactive component
+
+<a href="06-heatmap.html">Click to see the interactive component in full size</a>
+
 ```{r, echo=FALSE}
 htmltools::includeHTML("docs/06-heatmap.html")
 ```

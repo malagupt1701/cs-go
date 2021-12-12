@@ -105,6 +105,7 @@
             <section class="normal" id="section-">
 <div id="interactive-component" class="section level1" number="6">
 <h1><span class="header-section-number">Chapter 6</span> Interactive component</h1>
+<p><a href="06-heatmap.html">Click to see the interactive component in full size</a></p>
 <!DOCTYPE html>
 <meta charset="utf-8">
 
@@ -125,6 +126,9 @@
         display: block;
         margin-left: auto;
         margin-right: auto;
+    }
+    h4, h2{
+        text-align: center;
     }
     .buttonrow{
         width: 60%;
@@ -216,13 +220,29 @@
         stroke: steelblue;
         stroke-width: 5px;
     }
+    div.tooltip-donut {
+        position: absolute;
+        text-align: center;
+        padding: .5rem;
+        background: #FFFFFF;
+        color: #313639;
+        border: 1px solid #313639;
+        border-radius: 8px;
+        pointer-events: none;
+        font-size: 1.3rem;
+    }
 </style>
+
+
+
+    <h2>Event, team and map selection</h2>
 
 <div class="row" id="all_buttons">
     <div class="row buttonrow" id="all_buttons">
         <div class="block" id="event_buttons"></div>
         <div class="block" id="team_buttons"></div>
         <div class="block" id="map_buttons"></div>
+
     </div>
     
     
@@ -259,9 +279,21 @@
             <input type="checkbox" id="switch_traject" onclick="toggle(this,'#d3_traject',0.5)">
             <span class="slider round"></span>
         </label>
+
+    </div>
+
+    <div class="block">
+        <p>Change team side data</p>
+        <button type="button" id="side_button" class='side text' onclick="change_side(this)">Showing CT side</button>
+        
+    </div>
+    <div class="block">
+        <img src="./D3/logo/map_icon_de_dust2.png" id="map_logo" width="80" height="80">
     </div>
 
 </div>
+
+<div "block"> <h4 id="title_text"></h4> </div>
 
 <!-- HEATMAP DIV -->
 <div class="svg-container" id="myheatmap"></div>
@@ -274,13 +306,20 @@ const margin = {top: 10, right: 30, bottom: 30, left: 40},
 width = 460 - margin.left - margin.right,
 height = 400 - margin.top - margin.bottom;
 //global map parameters
-var glob_team="Vitality";
+//var glob_team="Vitality";
+//var glob_event="StarLadder Major Berlin 2019";
+//var glob_map="de_dust2";
+
+var glob_team="Astralis";
 var glob_event="StarLadder Major Berlin 2019";
-var glob_map="de_dust2";
+var glob_map="de_overpass";
+var glob_side="CT"
 //scaling for each map
-var mapXY={"de_mirage":{"x":[-3050, 1450],"y":[-3050,1550]},"de_inferno":{"x":[-2050, 2510],"y":[-790,3600]},"de_dust2":{"x":[-2310, 1630],"y":[-950,3000]},"de_overpass":{"x":[-4460, 250],"y":[-3150,1660]},"de_cache":{"x":[-1700, 2900],"y":[-2000,2950]},"de_nuke":{"x":[-2950, 3300],"y":[-3950,2550]},"de_train":{"x":[-2300, 1920],"y":[-2100,2200]},"de_vertigo":{"x":[-3450, 300],"y":[-2750,2450]}};
+var mapXY={"de_mirage":{"x":[-3050, 1450],"y":[-3050,1550]},"de_inferno":{"x":[-2050, 2510],"y":[-790,3600]},"de_dust2":{"x":[-2310, 1630],"y":[-950,3000]},"de_overpass":{"x":[-4680, 20],"y":[-3150,1500]},"de_cache":{"x":[-1700, 2900],"y":[-2000,2950]},"de_nuke":{"x":[-2950, 3300],"y":[-3950,2550]},"de_train":{"x":[-2300, 1920],"y":[-2100,2200]},"de_vertigo":{"x":[-3450, 300],"y":[-2750,2450]},"de_cbble":{"x":[-4000, 1050],"y":[-1850,3000]}};
 
-
+var div = d3.select("body").append("div")
+.attr("class", "tooltip-donut")
+.style("opacity", 0);
 
 function show_heatmap(side){
 
@@ -393,7 +432,8 @@ function show_heatmap(side){
      .attr("y2", d=>y(d.victimY))
      .attr("stroke-width", 0.2)
      .attr("stroke", "black")
-     .attr('opacity',show_traject);
+     .attr('opacity',show_traject)
+
 
       //attacker points
       svg.append('g')
@@ -407,7 +447,37 @@ function show_heatmap(side){
       .attr("r", 1.5)
       .style("fill", "#026A5D")
       .attr('opacity', show_attacker)
-      .attr('fill-opacity', 0.5);
+      .attr('fill-opacity', 0.5)
+      .on('mouseover', function (event,d, i) {
+        if(document.getElementById("switch_att").checked){
+            d3.select(this).transition()
+            .duration('200')
+            .attr('opacity', 1)
+            .attr('fill-opacity', 1)
+            .attr("r",2.5);
+            div.transition()
+            .duration(50)
+            .style("opacity", 1);
+
+            let num = "Attacker : "+d.attackerName+ "<br>"+"(Victim : "+d.victimName+") <br>Weapon: "+d.weapon;
+            div.html(num)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 15) + "px");
+        }
+      })
+      .on('mouseout', function (d, i) {
+        if(document.getElementById("switch_att").checked){
+            d3.select(this).transition()
+            .duration('100')
+            .attr('opacity', 0.5)
+            .attr('fill-opacity', 0.5)
+            .attr("r", 1.5);
+            div.transition()
+            .duration('50')
+            .style("opacity", 0);
+            
+        }
+      });
 
 
       //victim position data
@@ -422,7 +492,36 @@ function show_heatmap(side){
       .attr("r", 1.5)
       .style("fill", "#C64444")
       .attr('opacity', show_victim)
-      .attr('fill-opacity', 0.5);
+      .attr('fill-opacity', 0.5).on('mouseover', function (event,d, i) {
+        if(document.getElementById("switch_vic").checked){
+            d3.select(this).transition()
+            .duration('200')
+            .attr('opacity', 1)
+            .attr('fill-opacity', 1)
+            .attr("r", 2.5);
+            div.transition()
+            .duration(50)
+            .style("opacity", 1);
+            
+            let num = "Victim : "+d.victimName+ "<br>"+"(Attacker : "+d.attackerName+")<br>Weapon: "+d.weapon;
+            div.html(num)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 15) + "px");
+        }
+      })
+      .on('mouseout', function (d, i) {
+        if(document.getElementById("switch_vic").checked){
+            d3.select(this).transition()
+            .duration('100')
+            .attr('opacity', 0.5)
+            .attr("r", 1.5)
+            .attr('fill-opacity', 0.5);
+            div.transition()
+            .duration('50')
+            .style("opacity", 0);
+            
+        }
+      });
 
      // add background map image
      var g = svg.append("g");
@@ -437,8 +536,9 @@ function show_heatmap(side){
      g.lower();
 
     })
-    
-    
+
+update_title();
+update_logo();
 } // end of show_heatmap function
 </script>
 
@@ -460,7 +560,7 @@ function add_radiobtn(div_id,update_func,array){
         var label = document.createElement('label')
         label.htmlFor = key;
 
-        var description = document.createTextNode(key);
+        var description = document.createTextNode(" "+key);
         label.appendChild(description);
 
         var newline = document.createElement('br');
@@ -479,7 +579,7 @@ function update_map(map){
 
     // show 2D density graph
     d3.select("#heatmap_svg").remove()
-    show_heatmap("CT"); //show_points,attacker_pov,side
+    show_heatmap(glob_side); //show_points,attacker_pov,side
 
     
 } 
@@ -513,15 +613,34 @@ function toggle(toggle,id,opac){
         d3.selectAll(id).transition().duration(1000).attr('opacity',0);
     }
 }
-
+function change_side(){
+    if(glob_side=="CT"){
+        glob_side="T";
+        document.getElementById("side_button").innerText ="Showing T side";
+    }
+    else{
+        glob_side="CT";
+        document.getElementById("side_button").innerText ="Showing CT side";
+    }
+    d3.select("#heatmap_svg").remove()
+    show_heatmap(glob_side);
+}
 //initial toggle positions
+function update_title(){
+    let text =glob_side+" positions of team "+glob_team+ " on map "+glob_map +" during the "+glob_event+" event";
+    document.getElementById("title_text").innerText =text;
+}
+function update_logo(){
+
+    document.getElementById("map_logo").src ="./D3/logo/map_icon_"+glob_map+".png";
+}
 
 document.getElementById("switch_density").checked=true;
 document.getElementById("switch_att").checked=true;
 document.getElementById("switch_traject").checked=true;
 
 //show something
-show_heatmap("CT");
+show_heatmap(glob_side);
 
 
 

@@ -19,7 +19,7 @@
 		margin-left: auto;
 		margin-right: auto;
 	}
-	h4{
+	h4, h2{
 		text-align: center;
 	}
 	.buttonrow{
@@ -125,11 +125,16 @@
 	}
 </style>
 
+
+
+	<h2>Event, team and map selection</h2>
+
 <div class="row" id="all_buttons">
 	<div class="row buttonrow" id="all_buttons">
 		<div class="block" id="event_buttons"></div>
 		<div class="block" id="team_buttons"></div>
 		<div class="block" id="map_buttons"></div>
+
 	</div>
 	
 	
@@ -166,6 +171,7 @@
 			<input type="checkbox" id="switch_traject" onclick="toggle(this,'#d3_traject',0.5)">
 			<span class="slider round"></span>
 		</label>
+
 	</div>
 
 	<div class="block">
@@ -173,10 +179,13 @@
 		<button type="button" id="side_button" class='side text' onclick="change_side(this)">Showing CT side</button>
 		
 	</div>
+	<div class="block">
+		<img src="./D3/logo/map_icon_de_dust2.png" id="map_logo" width="80" height="80">
+	</div>
 
 </div>
 
-<div "block"> <h4 id="title_text"></h4></div>
+<div "block"> <h4 id="title_text"></h4> </div>
 
 <!-- HEATMAP DIV -->
 <div class="svg-container" id="myheatmap"></div>
@@ -189,12 +198,16 @@ const margin = {top: 10, right: 30, bottom: 30, left: 40},
 width = 460 - margin.left - margin.right,
 height = 400 - margin.top - margin.bottom;
 //global map parameters
-var glob_team="Vitality";
+//var glob_team="Vitality";
+//var glob_event="StarLadder Major Berlin 2019";
+//var glob_map="de_dust2";
+
+var glob_team="Astralis";
 var glob_event="StarLadder Major Berlin 2019";
-var glob_map="de_dust2";
+var glob_map="de_overpass";
 var glob_side="CT"
 //scaling for each map
-var mapXY={"de_mirage":{"x":[-3050, 1450],"y":[-3050,1550]},"de_inferno":{"x":[-2050, 2510],"y":[-790,3600]},"de_dust2":{"x":[-2310, 1630],"y":[-950,3000]},"de_overpass":{"x":[-4460, 250],"y":[-3150,1660]},"de_cache":{"x":[-1700, 2900],"y":[-2000,2950]},"de_nuke":{"x":[-2950, 3300],"y":[-3950,2550]},"de_train":{"x":[-2300, 1920],"y":[-2100,2200]},"de_vertigo":{"x":[-3450, 300],"y":[-2750,2450]}};
+var mapXY={"de_mirage":{"x":[-3050, 1450],"y":[-3050,1550]},"de_inferno":{"x":[-2050, 2510],"y":[-790,3600]},"de_dust2":{"x":[-2310, 1630],"y":[-950,3000]},"de_overpass":{"x":[-4680, 20],"y":[-3150,1500]},"de_cache":{"x":[-1700, 2900],"y":[-2000,2950]},"de_nuke":{"x":[-2950, 3300],"y":[-3950,2550]},"de_train":{"x":[-2300, 1920],"y":[-2100,2200]},"de_vertigo":{"x":[-3450, 300],"y":[-2750,2450]},"de_cbble":{"x":[-4000, 1050],"y":[-1850,3000]}};
 
 var div = d3.select("body").append("div")
 .attr("class", "tooltip-donut")
@@ -415,8 +428,9 @@ function show_heatmap(side){
 	 g.lower();
 
 	})
-	
-	update_title();
+
+update_title();
+update_logo();
 } // end of show_heatmap function
 </script>
 
@@ -507,6 +521,10 @@ function change_side(){
 function update_title(){
 	let text =glob_side+" positions of team "+glob_team+ " on map "+glob_map +" during the "+glob_event+" event";
 	document.getElementById("title_text").innerText =text;
+}
+function update_logo(){
+
+	document.getElementById("map_logo").src ="./D3/logo/map_icon_"+glob_map+".png";
 }
 
 document.getElementById("switch_density").checked=true;
