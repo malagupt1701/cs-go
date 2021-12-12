@@ -34,5 +34,74 @@ heat_kills
 heat_kills[,c("attackerX","attackerY","victimSide","victimX","victimY")]
 
 write.csv(heat_kills[,c("attackerX","attackerY","victimSide","victimX","victimY")],"D3/csv/test.csv", row.names = FALSE, quote=FALSE)
+
+
+
+events <- c('ESL One Cologne 2015','DreamHack Open Cluj-Napoca 2015','MLG Columbus 2016','ESL One Cologne 2016','ELEAGUE Major 2017','PGL Major Krakow 2017','ELEAGUE Major 2018','FACEIT Major 2018','IEM Katowice 2019','StarLadder Major Berlin 2019')
+
+
+
+# creates all team data
+for(event in events){
+  print(event)
+  
+  heat_kills <- damages %>%  filter(match_event==event)
+ 
+   teams <-levels( factor( heat_kills$attackerTeam) )
+  for(team in teams){
+  
+    heatmap <- heat_kills %>%filter(attackerTeam==team)
+     maps <-levels( factor( heatmap$map_name) )
+    for(map in maps){
+       
+      
+      #print(paste("D3/csv",event,team,"team", sep="/"))
+      dir.create(paste("D3/csv",event,team,map, sep="/"), showWarnings = TRUE,recursive=TRUE)
+      
+      temp <- heatmap %>%  filter(map_name==map) %>% filter(attackerSide=="CT")
+      write.csv(temp[,c("attackerX","attackerY","victimSide","victimX","victimY")],paste("D3/csv",event,team,map,paste(event,team,map,"CT","csv",sep="."), sep="/"), row.names = FALSE, quote=FALSE)
+      
+      temp <- heatmap %>%  filter(map_name==map) %>% filter(attackerSide=="T")
+      write.csv(temp[,c("attackerX","attackerY","victimSide","victimX","victimY")],paste("D3/csv",event,team,map,paste(event,team,map,"T","csv",sep="."), sep="/"), row.names = FALSE, quote=FALSE)
+    }
+  }
+}
+
+
+
+
+
+
+
+```
+
+# generating json file for d3
+```{r}
+json <- vector(mode="list", length=0)
+for(event in events){
+  print(event)
+  
+  heat_kills <- damages %>%  filter(match_event==event)
+ 
+   teams <-levels( factor( heat_kills$attackerTeam) )
+   eventteams <- vector(mode="list", length=0)
+  for(team in teams){
+    
+    heatmap <- heat_kills %>%filter(attackerTeam==team)
+     maps <-levels( factor( heatmap$map_name) )
+    mapsjson  <- vector(mode="list", length=0)
+     for(map in maps){
+       mapsjson[[map]] <- map
+     }
+     
+      eventteams[[team]] <- mapsjson
+  }
+   json[[event]] <-eventteams
+}
+
+jsonData <- toJSON(json)
+  
+# writing into JSON file
+write(jsonData, "D3/eventteams.json") 
 ```
 
