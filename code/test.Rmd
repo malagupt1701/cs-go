@@ -1,37 +1,200 @@
+---
+title: "test"
+output: html_document
+---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+```{r}
+library(dplyr)
+library(ggplot2)
+library(openintro)
+library(tidyverse)
+library(ggplot2)
+library(ggmosaic)
+library(mosaic)
+library(vcd)
+library(lubridate)
+library(jsonlite)
+library(plotly)
+library(parcoords)
+library(easyalluvial)
+library(patchwork)
+
+```
 
 ```{r}
-library(jsonlite)
-library(tidyverse)
-kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
-kills
-wins <- kills %>%  filter(attackerTeam!=victimTeam) %>%  group_by(match_id,round_num) %>%  summarise(map=last(map_name),winner=last(round_won_by),T_team=last(if_else(attackerSide=="T",attackerTeam,victimTeam)),event=last(match_event),map=last(map_name))
-wins <- wins %>% mutate(win_side=if_else(winner==T_team,'T','CT'))
-wins
-global_wins <- wins %>% group_by(event) %>% summarise(event=last(event),tot=n(),T_percent=100*sum(win_side=='T')/n()) %>% mutate(CT_percent=100-T_percent)
-global_wins
-
-level_order <- c('DreamHack Winter 2013','EMS One Katowice 2014','ESL One Cologne 2014','DreamHack Winter 2014','ESL One Katowice 2015','ESL One Cologne 2015','DreamHack Open Cluj-Napoca 2015','MLG Columbus 2016','ESL One Cologne 2016','ELEAGUE Major 2017','PGL Major Krakow 2017','ELEAGUE Major 2018','FACEIT Major 2018','IEM Katowice 2019','StarLadder Major Berlin 2019')
-
-
-library(reshape2)
-gloabl_wins_melt <- melt(global_wins,  variable.name="var",id.vars=c("event","tot"))
-
-ggplot(gloabl_wins_melt, aes(x = factor(event, level = level_order), y = value, group=var, col=var))+ 
-geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-
-
-```
-```{r fig.height=7,fig.width=15}
-wins
-map_wins <- wins %>% group_by(event,map) %>% summarise(event=last(event),tot=n(),T_percent=100*sum(win_side=='T')/n()) %>% mutate(CT_percent=100-T_percent)
-map_wins
-
-map_wins_melt <- melt(map_wins,  variable.name="var",id.vars=c("event","tot","map"))
-
-ggplot(map_wins_melt, aes(x = factor(event, level = level_order), y = value, group=var, col=var))+ 
-facet_wrap(~map)+
-geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+kills <- jsonlite::fromJSON("/Users/malaikagupta/Downloads/ALL_kills.json", simplifyVector = TRUE)
+kills$match_date <- as.numeric(kills$match_date)/1000
+kills$match_date <- as.Date(as.POSIXct(as.numeric(as.character(kills$match_date)),tz = "GMT", origin = "1960-01-01"))
 
 ```
 
+Interactive graph for players team change over the years corresponding to date and event
+```{r}
+
+wins <- kills %>%  filter(attackerTeam!=victimTeam) %>%  group_by(match_id,round_num) %>% summarise(map=last(map_name),T_team=last(if_else(attackerSide=="T","T","CT")))
+most_played <- kills %>%  
+        group_by(match_id ) %>%
+        summarise(attackerSteamID=last(attackerSteamID),attackerName=last(attackerName) ) %>%
+        group_by(attackerSteamID) %>% 
+        dplyr::summarise(match_count= n() , name=last(attackerName))
+most_played <- most_played[order(most_played$match_count, decreasing=TRUE), ] %>% top_n(15)
+players <- kills %>% group_by(match_event,attackerSteamID)   %>%  summarise(name=last(attackerName),team=last(attackerTeam),date=last(match_date),event=last(match_event) )
+players <- filter(players, name %in% most_played$name)
+players <- select(players , -c(attackerSteamID , event))
+col_order <- c("name", "date", "match_event",
+               "team") 
+players <- players[, col_order]
+players %>% 
+  arrange(team) %>% 
+  parcoords(rownames=F,color= list(
+       colorBy = "name",
+       colorScale='scaleOrdinal',
+       colorScheme = "schemeCategory10"),
+       withD3=T,brushMode="1D-axes",reorderable = T,queue=T,alpha=0.5)
+```
+```{r,fig.height=6,fig.width=13}
+
+most_played <- kills %>%  
+        group_by(match_id ) %>%
+        summarise(attackerSteamID=last(attackerSteamID),attackerName=last(attackerName) ) %>%
+        group_by(attackerSteamID) %>% 
+        dplyr::summarise(match_count= n() , name=last(attackerName))
+most_played <- most_played[order(most_played$match_count, decreasing=TRUE), ] %>% top_n(10)
+players <- kills %>% group_by(match_event,attackerSteamID)   %>%  summarise(name=last(attackerName),team=last(attackerTeam),date=year(last(match_date))  )
+players <- filter(players, name %in% most_played$name)
+
+players <- players %>% group_by(team,name) %>% summarise(name=last(name),team=last(team),date=last(date), count = n() , event = last(match_event),attackerSteamID=last(attackerSteamID))
+
+players <- players[order(players$date, decreasing=TRUE),]
+alluvial_long(players
+              , key = event
+              , value = team
+              , id = attackerSteamID
+              , fill = name
+              , fill_right = F
+              , NA_label = 'None'
+              )
+```
+
+```{r,fig.height=5,fig.width=13}
+
+wins <- wins %>% group_by(match_id,T_team) %>% summarise(count = n() , map=last(map))
+T_team_wins <- wins[wins$T_team=="T",]
+CT_team_wins <- wins[wins$T_team=="CT",]
+
+T_team_wins <- select (T_team_wins,-c(map))
+CT_team_wins<- select (CT_team_wins,-c(map))
+
+toDelete <- seq(0, nrow(wins), 2)
+wins <- wins[ toDelete ,]
+
+mergedData <- merge(T_team_wins,CT_team_wins,by="match_id")
+mergedData["map"] <- wins["map"]
+mergedData <- select(mergedData , -c(T_team.x , match_id ,T_team.y))
+
+
+finalData <- data.frame(map = c(0),T = c(0) , CT = c(0))
+
+
+filteredData <- mergedData[mergedData$map == "de_inferno" ,] 
+        TCount<- sum(filteredData[ , "count.x"], na.rm=TRUE)
+        CTCount<- sum(filteredData[ , "count.y"], na.rm=TRUE)
+        print(TCount)
+        finalData <- rbind(finalData, c("de_inferno", TCount, CTCount))
+
+filteredData <- mergedData[mergedData$map == "de_dust2" ,] 
+        TCount<- sum(filteredData[ , "count.x"], na.rm=TRUE)
+        CTCount<- sum(filteredData[ , "count.y"], na.rm=TRUE)
+        finalData <- rbind(finalData, c("de_dust2", TCount, CTCount))
+
+filteredData <- mergedData[mergedData$map == "de_vertigo" ,] 
+        TCount<- sum(filteredData[ , "count.x"], na.rm=TRUE)
+        CTCount<- sum(filteredData[ , "count.y"], na.rm=TRUE)
+        finalData <-  rbind(finalData, c("de_vertigo", TCount, CTCount))
+
+filteredData <- mergedData[mergedData$map == "de_train" ,] 
+        TCount<- sum(filteredData[ , "count.x"], na.rm=TRUE)
+        CTCount<- sum(filteredData[ , "count.y"], na.rm=TRUE)
+        finalData <- rbind(finalData, c("de_train", TCount, CTCount))
+         
+filteredData <- mergedData[mergedData$map == "de_nuke" ,] 
+        TCount<- sum(filteredData[ , "count.x"], na.rm=TRUE)
+        CTCount<- sum(filteredData[ , "count.y"], na.rm=TRUE)
+        finalData <- rbind(finalData, c("de_nuke", TCount, CTCount))
+         
+filteredData <- mergedData[mergedData$map == "de_overpass" ,] 
+        TCount<- sum(filteredData[ , "count.x"], na.rm=TRUE)
+        CTCount<- sum(filteredData[ , "count.y"], na.rm=TRUE)
+        finalData <- rbind(finalData, c("de_overpass", TCount, CTCount))
+         
+filteredData <- mergedData[mergedData$map == "de_cbble" ,] 
+        TCount<- sum(filteredData[ , "count.x"], na.rm=TRUE)
+        CTCount<- sum(filteredData[ , "count.y"], na.rm=TRUE)
+        finalData <- rbind(finalData, c("de_cbble", TCount, CTCount))
+         
+filteredData <- mergedData[mergedData$map == "de_cache" ,] 
+        TCount<- sum(filteredData[ , "count.x"], na.rm=TRUE)
+        CTCount<- sum(filteredData[ , "count.y"], na.rm=TRUE)
+        finalData <- rbind(finalData, c("de_cache", TCount, CTCount))
+         
+filteredData <- mergedData[mergedData$map == "de_mirage" ,] 
+        TCount<- sum(filteredData[ , "count.x"], na.rm=TRUE)
+        CTCount<- sum(filteredData[ , "count.y"], na.rm=TRUE)
+        finalData <- rbind(finalData, c("de_mirage", TCount, CTCount))
+
+
+finalData <- finalData[-1,]
+finalData <- gather(finalData, key="measure", value="value", c("T", "CT"))
+
+ggplot(finalData, aes(x=map, y=value))+
+  geom_bar(stat='identity', fill="lightblue", colour = "blue")+
+  facet_wrap(~measure)
+```
+
+```{r}
+damages <- jsonlite::fromJSON("/Users/malaikagupta/Downloads/ALL_damages.json", simplifyVector = TRUE)
+damages$match_date <- as.numeric(damages$match_date)/1000
+damages$match_date <- year(as.Date(as.POSIXct(as.numeric(as.character(damages$match_date)),tz = "GMT", origin = "1960-01-01")))
+drop <- c('match_date','weapon')
+data = damages[,(names(damages) %in% drop)]
+set <- data %>% group_by(match_date, weapon) %>% summarise(Count = n()) %>% arrange(desc(match_date), desc(Count))
+
+```
+
+```{r,fig.height=5,fig.width=7}
+
+year2009 = filter(set , match_date==2009)[1:5 ,]
+year2008 = filter(set , match_date==2008)[1:5 ,]
+year2007 = filter(set , match_date==2007)[1:5 ,]
+year2006 = filter(set , match_date==2006)[1:5 ,]
+year2005 = filter(set , match_date==2005)[1:5 ,]
+
+
+year2009G <- ggplot(year2009, aes(x = reorder(weapon,-Count) , y = Count)) +
+     geom_bar(stat = "identity" , color = "blue", fill = "lightblue")  + labs(x="Weapon") +
+     ggtitle("Most popular weapons in the year 2009") 
+
+year2008G <- ggplot(year2008, aes(x = reorder(weapon,-Count) , y = Count)) +
+     geom_bar(stat = "identity" , color = "blue", fill = "lightblue") + labs(x="Weapon") +
+        ggtitle("Most popular weapons in the year 2008") 
+year2007G <-  ggplot(year2007, aes(x = reorder(weapon,-Count) , y = Count)) +
+     geom_bar(stat = "identity",color = "blue", fill = "lightblue") + labs(x="Weapon")+
+        ggtitle("Most popular weapons in the year 2007") 
+year2006G <- ggplot(year2006, aes(x = reorder(weapon,-Count) , y = Count)) +
+     geom_bar(stat = "identity",color = "blue", fill = "lightblue") + labs(x="Weapon")+
+        ggtitle("Most popular weapons in the year 2006") 
+year2005G <- ggplot(year2005, aes(x = reorder(weapon,-Count) , y = Count)) +
+     geom_bar(stat = "identity",color = "blue", fill = "lightblue") + labs(x="Weapon")+
+        ggtitle("Most popular weapons in the year 2005") 
+
+
+
+(year2005G + year2006G +year2007G)/(year2008G+year2009G)
+
+ 
+```
