@@ -27,7 +27,7 @@ library(patchwork)
 ```
 
 ```{r}
-kills <- jsonlite::fromJSON("/Users/malaikagupta/Downloads/ALL_kills.json", simplifyVector = TRUE)
+kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
 kills$match_date <- as.numeric(kills$match_date)/1000
 kills$match_date <- as.Date(as.POSIXct(as.numeric(as.character(kills$match_date)),tz = "GMT", origin = "1960-01-01"))
 
@@ -157,7 +157,7 @@ ggplot(finalData, aes(x=map, y=value))+
 ```
 
 ```{r}
-damages <- jsonlite::fromJSON("/Users/malaikagupta/Downloads/ALL_damages.json", simplifyVector = TRUE)
+damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
 damages$match_date <- as.numeric(damages$match_date)/1000
 damages$match_date <- year(as.Date(as.POSIXct(as.numeric(as.character(damages$match_date)),tz = "GMT", origin = "1960-01-01")))
 drop <- c('match_date','weapon')
