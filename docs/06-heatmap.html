@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- D3 V7 -->
+<script src="https://d3js.org/d3.v7.js"></script>
+<!-- json data-->
+<script src="./D3/event_teamsJSON.js"></script>
+
+<style type="text/css">
+	
+	.row {
+		width: 100%;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+	}
+	.block {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	.buttonrow{
+		width: 60%;
+	}
+
+	/* The switch - the box around the slider */
+	.switch {
+		position: relative;
+		display: inline-block;
+		width: 60px;
+		height: 34px;
+	}
+
+	/* Hide default HTML checkbox */
+	.switch input {
+		opacity: 0;
+		width: 0;
+		height: 0;
+	}
+
+	/* The slider */
+	.slider {
+		position: absolute;
+		cursor: pointer;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: #ccc;
+		-webkit-transition: .4s;
+		transition: .4s;
+	}
+
+	.slider:before {
+		position: absolute;
+		content: "";
+		height: 26px;
+		width: 26px;
+		left: 4px;
+		bottom: 4px;
+		background-color: white;
+		-webkit-transition: .4s;
+		transition: .4s;
+	}
+
+	input:checked + .slider {
+		background-color: #2196F3;
+	}
+
+	input:focus + .slider {
+		box-shadow: 0 0 1px #2196F3;
+	}
+
+	input:checked + .slider:before {
+		-webkit-transform: translateX(26px);
+		-ms-transform: translateX(26px);
+		transform: translateX(26px);
+	}
+
+	/* Rounded sliders */
+	.slider.round {
+		border-radius: 34px;
+	}
+
+	.slider.round:before {
+		border-radius: 50%;
+	}
+
+	.svg-container {
+		display: inline-block;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		position: relative;
+		width: 100%;
+		padding-bottom: 100%; /* aspect ratio */
+		vertical-align: top;
+		overflow: hidden;
+	}
+	.svg-content-responsive {
+		display: inline-block;
+		position: absolute;
+		top: 10px;
+		left: 0;
+	}
+
+	svg .rect {
+		fill: gold;
+		stroke: steelblue;
+		stroke-width: 5px;
+	}
+</style>
+
+<div class="row" id="all_buttons">
+	<div class="row buttonrow" id="all_buttons">
+		<div class="block" id="event_buttons"></div>
+		<div class="block" id="team_buttons"></div>
+		<div class="block" id="map_buttons"></div>
+	</div>
+	
+	
+</div>
+
+<div class="row">
+	<div class="block">
+		<p>2d-density of attacker position</p>
+		<label class="switch">
+			<input type="checkbox" id="switch_density" onclick="toggle(this,'#d3_density',1)">
+			<span class="slider round"></span>
+		</label>
+	</div>
+
+	<div class="block">
+		<p>Show attacker positions</p>
+		<label class="switch">
+			<input type="checkbox"id="switch_att" onclick="toggle(this,'#d3_attackpoint',0.2)">
+			<span class="slider round"></span>
+		</label>
+	</div>
+
+	<div class="block">
+		<p>Show victim positions</p>
+		<label class="switch">
+			<input type="checkbox" id="switch_vic" onclick="toggle(this,'#d3_victimpoint',0.5)">
+			<span class="slider round"></span>
+		</label>
+	</div>
+
+	<div class="block">
+		<p>Show trajectories</p>
+		<label class="switch">
+			<input type="checkbox" id="switch_traject" onclick="toggle(this,'#d3_traject',0.5)">
+			<span class="slider round"></span>
+		</label>
+	</div>
+
+</div>
+
+<!-- HEATMAP DIV -->
+<div class="svg-container" id="myheatmap"></div>
+
+
+<script>
+// FOR EACH EVENT, HEAT MAP OF EACH PLAYER IN TOP N, 
+// set the dimensions and margins of the graph
+const margin = {top: 10, right: 30, bottom: 30, left: 40},
+width = 460 - margin.left - margin.right,
+height = 400 - margin.top - margin.bottom;
+//global map parameters
+var glob_team="Vitality";
+var glob_event="StarLadder Major Berlin 2019";
+var glob_map="de_dust2";
+//scaling for each map
+var mapXY={"de_mirage":{"x":[-3050, 1450],"y":[-3050,1550]},"de_inferno":{"x":[-2050, 2510],"y":[-790,3600]},"de_dust2":{"x":[-2310, 1630],"y":[-950,3000]},"de_overpass":{"x":[-4460, 250],"y":[-3150,1660]},"de_cache":{"x":[-1700, 2900],"y":[-2000,2950]},"de_nuke":{"x":[-2950, 3300],"y":[-3950,2550]},"de_train":{"x":[-2300, 1920],"y":[-2100,2200]},"de_vertigo":{"x":[-3450, 300],"y":[-2750,2450]}};
+
+
+
+function show_heatmap(side){
+
+	//filter toggles position
+	var show_density = 1;
+	if (! document.getElementById("switch_density").checked) show_density=0
+
+		var show_attacker =0.5;
+	if(! document.getElementById("switch_att").checked) show_attacker=0;
+
+	var show_victim =0.5;
+	if(!document.getElementById("switch_vic").checked) show_victim=0;
+
+	var show_traject =0.2;
+	if(!document.getElementById("switch_traject").checked) show_traject=0;
+
+
+
+	// append the svg object to the body of the page
+	var svg = d3.select("#myheatmap")
+	.append("svg")
+	 // Responsive SVG
+	 .attr("preserveAspectRatio", "xMinYMin meet")
+	 .attr("viewBox", "0 0 460 400")
+	 .classed("svg-content-responsive", true)
+	 .attr("id", "heatmap_svg") 
+	 .append("g")
+	 .attr("transform", `translate(${margin.left},${margin.top})`);
+
+
+	// READ DATA
+	var path="./D3/csv/"+glob_event+"/"+glob_team+"/"+glob_map+"/"+glob_event+"."+glob_team+"."+glob_map+"."+side+".csv"
+	d3.csv(path).then( function(data) {
+
+	  // Add X axis range
+	  var x = d3.scaleLinear()
+	  .domain(mapXY[glob_map]["x"])
+	  .range([ margin.left, width - margin.right ]);
+
+
+
+	  // Add Y axis same range
+	  var y = d3.scaleLinear()
+	  .domain(mapXY[glob_map]["y"])
+	  .range([ height - margin.bottom, margin.top ]);
+
+
+	  
+	  // compute the density data
+	  if(true){ // attacker position data
+	  	var densityData = d3.contourDensity()
+	  	.x(function(d) { return x(d.attackerX); })
+	  	.y(function(d) { return y(d.attackerY); })
+	  	.size([width, height])
+	  	.bandwidth(9)
+	  	(data)
+	  }
+	  else{ //victim position data
+	  	var densityData = d3.contourDensity()
+	  	.x(function(d) { return x(d.victimX); })
+	  	.y(function(d) { return y(d.victimY); })
+	  	.size([width, height])
+	  	.bandwidth(10)
+	  	(data)
+	  }
+
+	  //console.log(densityData)
+
+	  //Max density value calculated, used to get the color value range 
+	  var max_density=0
+	  for (let i = 0; i < densityData.length; i++) {
+	  	if(max_density<densityData[i].value){
+	  		max_density=densityData[i].value
+	  	}
+	  }
+	  //console.log(max_density);
+
+	   // Prepare a color palette range values
+	   var color = d3.scaleLinear()
+	   .domain([0, max_density]) 
+	      .range(["#ffef0002", "#DA2F1B"]);//yellow to red
+
+	 //change from linear scaling to custom scaling
+	 function scaling_func(dens){
+	 	function func(dens){ // scaling function, has to start at 0 ie func(0)=0
+	 		return dens*dens*dens;
+	 	}
+	 	return func(dens)*max_density/func(max_density);
+	 }
+
+	 //add 2D density to svg 
+	 ahah=svg.insert("g", "g")
+	 .selectAll("path")
+	 .data(densityData)
+	 .enter().append("path")
+	 .attr("id","d3_density")
+	 .attr("d", d3.geoPath())
+	 .attr("fill", function(d) { return color(scaling_func(d.value)); })
+	 .attr('opacity',show_density);
+
+	 //trajectories
+	 svg.selectAll("line")
+	 .data(data)
+	 .enter()
+	 .append("line")
+	 .attr("id","d3_traject")
+	 .attr("x1", d=>x(d.attackerX))
+	 .attr("y1", d=>y(d.attackerY))
+	 .attr("x2", d=>x(d.victimX))
+	 .attr("y2", d=>y(d.victimY))
+	 .attr("stroke-width", 0.2)
+	 .attr("stroke", "black")
+	 .attr('opacity',show_traject);
+
+	  //attacker points
+	  svg.append('g')
+	  .selectAll("dot")
+	  .data(data)
+	  .enter()
+	  .append("circle")
+	  .attr("id","d3_attackpoint")
+	  .attr("cx", function (d) { return x(d.attackerX); } )
+	  .attr("cy", function (d) { return y(d.attackerY); } )
+	  .attr("r", 1.5)
+	  .style("fill", "#026A5D")
+	  .attr('opacity', show_attacker)
+	  .attr('fill-opacity', 0.5);
+
+
+	  //victim position data
+	  svg.append('g')
+	  .selectAll("dot")
+	  .data(data)
+	  .enter()
+	  .append("circle")
+	  .attr("id","d3_victimpoint")
+	  .attr("cx", function (d) { return x(d.victimX); } )
+	  .attr("cy", function (d) { return y(d.victimY); } )
+	  .attr("r", 1.5)
+	  .style("fill", "#C64444")
+	  .attr('opacity', show_victim)
+	  .attr('fill-opacity', 0.5);
+
+	 // add background map image
+	 var g = svg.append("g");
+	 var img = g.append('svg:image')
+	 .attr('xlink:href','./D3/maps/'+glob_map+'.jpg')
+	 .attr("width", width*1.02)
+	 .attr("height", height*1.02)
+	 .attr("x", 10)
+	 .attr("y", -10)
+	 .attr('opacity',0.6)
+	 .attr("z-index", 1);
+	 g.lower();
+
+	})
+	
+	
+} // end of show_heatmap function
+</script>
+
+
+<script type="text/javascript">
+
+//display radio buttons for events
+
+function add_radiobtn(div_id,update_func,array){
+	for (var key in array) {
+		
+		var radiobox = document.createElement('input');
+		radiobox.type = 'radio';
+		radiobox.id = key;
+		radiobox.value = key
+		radiobox.name=div_id;
+		radiobox.addEventListener("click", function(){ update_func(this.value) });
+
+		var label = document.createElement('label')
+		label.htmlFor = key;
+
+		var description = document.createTextNode(key);
+		label.appendChild(description);
+
+		var newline = document.createElement('br');
+		var container = document.getElementById(div_id);
+		container.appendChild(radiobox);
+		container.appendChild(label);
+		container.appendChild(newline);
+
+	}
+}
+
+//update map list buttons for each event and team
+function update_map(map){
+	//console.log(event_teamsJSON[event]);
+	glob_map=map
+
+	// show 2D density graph
+	d3.select("#heatmap_svg").remove()
+	show_heatmap("CT"); //show_points,attacker_pov,side
+
+	
+} 
+//update team list buttons for each event 
+function update_team(team){
+	//console.log(event_teamsJSON[event]);
+	glob_team=team
+	// clear div 
+	document.getElementById("map_buttons").innerHTML = "";
+	add_radiobtn("map_buttons",update_map,event_teamsJSON[glob_event][glob_team]);
+}
+
+//show events
+function update_event(event){
+	//console.log(event_teamsJSON[event]);
+	glob_event=event
+	// clear div 
+	document.getElementById("map_buttons").innerHTML = "";
+	document.getElementById("team_buttons").innerHTML = "";
+	add_radiobtn("team_buttons",update_team,event_teamsJSON[glob_event]);
+}
+add_radiobtn("event_buttons",update_event,event_teamsJSON);
+
+
+// filter toggle listener
+function toggle(toggle,id,opac){
+	if(toggle.checked){
+		d3.selectAll(id).transition().duration(1000).attr('opacity',opac);
+	}
+	else{
+		d3.selectAll(id).transition().duration(1000).attr('opacity',0);
+	}
+}
+
+//initial toggle positions
+
+document.getElementById("switch_density").checked=true;
+document.getElementById("switch_att").checked=true;
+document.getElementById("switch_traject").checked=true;
+
+//show something
+show_heatmap("CT");
+
+
+
+</script>
+
+
+
+
+

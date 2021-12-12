@@ -1,5 +1,5 @@
 # Interactive component
 ```{r, echo=FALSE}
-htmltools::includeHTML("06-heatmap.html")
+htmltools::includeHTML("docs/06-heatmap.html")
 ```
 
