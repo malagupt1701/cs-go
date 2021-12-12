@@ -94,11 +94,17 @@ team_killsstat <- team_killsstat %>% mutate(relative_score_diff=if_else(winner!=
 PCA
 
 ```{r}
-team_killsstat.pca <- prcomp(team_killsstat[,c(3,4,6:10,16:22,26)], center = TRUE,scale. = TRUE)
+
+pca.variables <- c('kills_tot', 'kpr', 'hs_percent', 'blinded_percent', 'first_kill_percent',
+'non_traded_percent', 'assist_percent', 'strafing', 'adr',  'avg_flash_duration', 'grenades_per_round')
+
+team_killsstat.pca <- prcomp(team_killsstat[,pca.variables], center = TRUE,scale. = TRUE)
 
 summary(team_killsstat.pca)
 
 ```
+
+
 ```{r}
 library(cli)
 library(devtools)
@@ -115,28 +121,12 @@ library(ggbiplot)
 ggbiplot(team_killsstat.pca)
 ```
 
-We rescale on the center of the graph (ignoring the one very far outliers) and color points so that teams that have won appear in a certain color, and teams that didn't appear in another color.
+We now color points so that teams that have won appear in a certain color, and teams that didn't appear in another color.
 
+```{r fig.height = 8}
 
-```{r}
-team_killsstat$win <- ifelse(team_killsstat$relative_score_diff > 0, "win", "lose") 
-#This columns tells if the team won (1) or lost (0)
-```
-
-```{r}
-
-p <- ggbiplot(team_killsstat.pca, obs.scale = 1, var.scale = 1,circle=TRUE, groups=team_killsstat$win,varname.adjust = 1.45, alpha = 0.5)
-p <- p + xlim(-4.9, 3) + ylim(-3.1, 5)
+p <- ggbiplot(team_killsstat.pca , obs.scale = 1, var.scale =1,circle=TRUE, groups=team_killsstat$win,varname.adjust = 1.6, varname.size = 2.5,  alpha = 0.7)
+p <- p + xlim(-4.5, 3) + ylim(-3.1, 5)
 p
-```
-
-```{r}
-p2 <- ggbiplot(team_killsstat.pca, obs.scale = 2, var.scale = 0.1, varname.adjust = 1, alpha = 0)
-p2 <- p2 + xlim(-5, 3) + ylim(-5, 3)
-p2
-```
-```
-```{r}
-
 ```
 
