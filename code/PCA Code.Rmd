@@ -125,8 +125,14 @@ We now color points so that teams that have won appear in a certain color, and t
 
 ```{r fig.height = 8}
 
-p <- ggbiplot(team_killsstat.pca , obs.scale = 1, var.scale =1,circle=TRUE, groups=team_killsstat$win,varname.adjust = 1.6, varname.size = 2.5,  alpha = 0.7)
-p <- p + xlim(-4.5, 3) + ylim(-3.1, 5)
+p <- ggbiplot(team_killsstat.pca , obs.scale = 1, var.scale =1,circle=TRUE, groups=team_killsstat$win,varname.adjust = 1.7, varname.size = 2.3,  alpha = 0.7)
+
+p <- p + xlim(-4.5, 3) + 
+  ylim(-3.1, 5) + 
+  ggtitle("PCA of team statistics in matches")  +
+  theme(plot.title = element_text(hjust = 0.5))+ 
+  labs(colour = "Match result") 
+
 p
 ```
 
