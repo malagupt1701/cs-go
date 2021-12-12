@@ -19,6 +19,9 @@
 		margin-left: auto;
 		margin-right: auto;
 	}
+	h4{
+		text-align: center;
+	}
 	.buttonrow{
 		width: 60%;
 	}
@@ -154,7 +157,15 @@
 		</label>
 	</div>
 
+	<div class="block">
+		<p>Change team side data</p>
+		<button type="button" id="side_button" class='side text' onclick="change_side(this)">Showing CT side</button>
+		
+	</div>
+
 </div>
+
+<div "block"> <h4 id="title_text"></h4></div>
 
 <!-- HEATMAP DIV -->
 <div class="svg-container" id="myheatmap"></div>
@@ -170,6 +181,7 @@ height = 400 - margin.top - margin.bottom;
 var glob_team="Vitality";
 var glob_event="StarLadder Major Berlin 2019";
 var glob_map="de_dust2";
+var glob_side="CT"
 //scaling for each map
 var mapXY={"de_mirage":{"x":[-3050, 1450],"y":[-3050,1550]},"de_inferno":{"x":[-2050, 2510],"y":[-790,3600]},"de_dust2":{"x":[-2310, 1630],"y":[-950,3000]},"de_overpass":{"x":[-4460, 250],"y":[-3150,1660]},"de_cache":{"x":[-1700, 2900],"y":[-2000,2950]},"de_nuke":{"x":[-2950, 3300],"y":[-3950,2550]},"de_train":{"x":[-2300, 1920],"y":[-2100,2200]},"de_vertigo":{"x":[-3450, 300],"y":[-2750,2450]}};
 
@@ -331,7 +343,7 @@ function show_heatmap(side){
 
 	})
 	
-	
+	update_title();
 } // end of show_heatmap function
 </script>
 
@@ -353,7 +365,7 @@ function add_radiobtn(div_id,update_func,array){
 		var label = document.createElement('label')
 		label.htmlFor = key;
 
-		var description = document.createTextNode(key);
+		var description = document.createTextNode(" "+key);
 		label.appendChild(description);
 
 		var newline = document.createElement('br');
@@ -372,7 +384,7 @@ function update_map(map){
 
 	// show 2D density graph
 	d3.select("#heatmap_svg").remove()
-	show_heatmap("CT"); //show_points,attacker_pov,side
+	show_heatmap(glob_side); //show_points,attacker_pov,side
 
 	
 } 
@@ -406,15 +418,30 @@ function toggle(toggle,id,opac){
 		d3.selectAll(id).transition().duration(1000).attr('opacity',0);
 	}
 }
-
+function change_side(){
+	if(glob_side=="CT"){
+		glob_side="T";
+		document.getElementById("side_button").innerText ="Showing T side";
+	}
+	else{
+		glob_side="CT";
+		document.getElementById("side_button").innerText ="Showing CT side";
+	}
+	d3.select("#heatmap_svg").remove()
+	show_heatmap(glob_side);
+}
 //initial toggle positions
+function update_title(){
+	let text =glob_side+" positions of team "+glob_team+ " on map "+glob_map +" during the "+glob_event+" event";
+	document.getElementById("title_text").innerText =text;
+}
 
 document.getElementById("switch_density").checked=true;
 document.getElementById("switch_att").checked=true;
 document.getElementById("switch_traject").checked=true;
 
 //show something
-show_heatmap("CT");
+show_heatmap(glob_side);
 
 
 
