@@ -121,7 +121,7 @@ library(ggbiplot)
 ggbiplot(team_killsstat.pca)
 ```
 
-We now color points so that teams that have won appear in a certain color, and teams that didn't appear in another color.
+We now color points so that teams that have won appear in a certain color, and teams that didn't appear in another color. We also make arrow stand out a bit more, and add the correlation circle.
 
 ```{r fig.height = 8}
 
