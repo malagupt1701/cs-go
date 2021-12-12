@@ -27,7 +27,7 @@ library(patchwork)
 ```
 
 ```{r}
-kills <- jsonlite::fromJSON("/Users/malaikagupta/Downloads/ALL_kills.json", simplifyVector = TRUE)
+kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
 kills$match_date <- as.numeric(kills$match_date)/1000
 kills$match_date <- as.Date(as.POSIXct(as.numeric(as.character(kills$match_date)),tz = "GMT", origin = "1960-01-01"))
 
@@ -59,25 +59,28 @@ players %>%
 ```
 ```{r,fig.height=6,fig.width=13}
 
-most_played <- kills %>%  
-        group_by(match_id ) %>%
-        summarise(attackerSteamID=last(attackerSteamID),attackerName=last(attackerName) ) %>%
-        group_by(attackerSteamID) %>% 
-        dplyr::summarise(match_count= n() , name=last(attackerName))
-most_played <- most_played[order(most_played$match_count, decreasing=TRUE), ] %>% top_n(10)
+names <- c("device","dupreeh","Xyp9x","Magisk","gla1ve")
+
 players <- kills %>% group_by(match_event,attackerSteamID)   %>%  summarise(name=last(attackerName),team=last(attackerTeam),date=year(last(match_date))  )
-players <- filter(players, name %in% most_played$name)
+players <- filter(players, name %in% names)
+players
+#players <- players %>% group_by(team,name) %>% summarise(name=last(name),team=last(team),date=last(date), count = n() , event = last(match_event),attackerSteamID=last(attackerSteamID))
 
-players <- players %>% group_by(team,name) %>% summarise(name=last(name),team=last(team),date=last(date), count = n() , event = last(match_event),attackerSteamID=last(attackerSteamID))
 
-players <- players[order(players$date, decreasing=TRUE),]
+
+level_order <- c('DreamHack Winter 2013','EMS One Katowice 2014','ESL One Cologne 2014','DreamHack Winter 2014','ESL One Katowice 2015','ESL One Cologne 2015','DreamHack Open Cluj-Napoca 2015','MLG Columbus 2016','ESL One Cologne 2016','ELEAGUE Major 2017','PGL Major Krakow 2017','ELEAGUE Major 2018','FACEIT Major 2018','IEM Katowice 2019','StarLadder Major Berlin 2019')
+#players <- players[match(level_order, players$match_event),]
+players <- players[order(factor(players$match_event, levels=unique(level_order))),]
+players
 alluvial_long(players
-              , key = event
+              , key = match_event
               , value = team
               , id = attackerSteamID
               , fill = name
               , fill_right = F
               , NA_label = 'None'
+              ,order_levels_key =level_order
+              ,col_vector_value = c("blue","red","green","yellow","black")
               )
 ```
 
@@ -157,7 +160,7 @@ ggplot(finalData, aes(x=map, y=value))+
 ```
 
 ```{r}
-damages <- jsonlite::fromJSON("/Users/malaikagupta/Downloads/ALL_damages.json", simplifyVector = TRUE)
+damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
 damages$match_date <- as.numeric(damages$match_date)/1000
 damages$match_date <- year(as.Date(as.POSIXct(as.numeric(as.character(damages$match_date)),tz = "GMT", origin = "1960-01-01")))
 drop <- c('match_date','weapon')

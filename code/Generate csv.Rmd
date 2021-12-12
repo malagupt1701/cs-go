@@ -27,12 +27,12 @@ plot(pressure)
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 ```{r}
-
-heat_kills <- damages %>%  filter(map_name == "de_cbble" )
+damages
+heat_kills <- damages %>%  filter(match_event=="StarLadder Major Berlin 2019") %>%  filter(map_name == "de_inferno" ) 
 
 heat_kills[,c("attackerX","attackerY","victimSide","victimX","victimY")]
 
-write.csv(heat_kills[,c("attackerX","attackerY","victimSide","victimX","victimY")],"D3/csv/cbble.csv", row.names = FALSE, quote=FALSE)
+write.csv(heat_kills[,c("attackerX","attackerY","victimSide","victimX","victimY")],"D3/csv/inferno.csv", row.names = FALSE, quote=FALSE)
 
 
 
@@ -44,7 +44,7 @@ events <- c('ESL One Cologne 2015','DreamHack Open Cluj-Napoca 2015','MLG Columb
 for(event in events){
   print(event)
   
-  heat_kills <- damages %>%  filter(match_event==event)
+  heat_kills <- damages %>%  filter(match_event==event) %>% filter(! weapon %in% c('HE Grenade','Molotov','World','Incendiary Grenade'))
  
    teams <-levels( factor( heat_kills$attackerTeam) )
   for(team in teams){
