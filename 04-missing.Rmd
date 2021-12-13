@@ -13,6 +13,8 @@ Of all the matches data, only the kills and damages data frames contained missin
 
 The kills data frame contains information about each confirmed kill by any of the 10 players of both teams.
 ```{r , fig.width=14, fig.height=8}
+#TO REGENERATE subset_kills.Rda, use the create_subset.Rmd file
+
 data <- readRDS(file = "data/subset_kills.Rda")
 plot_missing(data, Percentflag  = TRUE)
 ```
@@ -44,6 +46,10 @@ plot_missing(data, Percentflag  = TRUE)
 The damages data frame contains information about each damage a player receives. A damage results in less health points.
 
 ```{r , fig.width=14, fig.height=8}
+
+#TO REGENERATE subset_damages.Rda, use the create_subset.Rmd file
+
+
 data <- readRDS(file = "data/subset_damages.Rda")
 plot_missing(data, Percentflag  = TRUE)
 ```

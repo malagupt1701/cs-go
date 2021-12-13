@@ -94,6 +94,7 @@
 <li class="chapter" data-level="3.3" data-path="data-transformation.html"><a href="data-transformation.html#damages-data"><i class="fa fa-check"></i><b>3.3</b> Damages data</a></li>
 <li class="chapter" data-level="3.4" data-path="data-transformation.html"><a href="data-transformation.html#flashes-data"><i class="fa fa-check"></i><b>3.4</b> Flashes data</a></li>
 <li class="chapter" data-level="3.5" data-path="data-transformation.html"><a href="data-transformation.html#grenades-data"><i class="fa fa-check"></i><b>3.5</b> grenades data</a></li>
+<li class="chapter" data-level="3.6" data-path="data-transformation.html"><a href="data-transformation.html#common-data"><i class="fa fa-check"></i><b>3.6</b> Common data</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a>
 <ul>
@@ -137,7 +138,8 @@
 <h1><span class="header-section-number">Chapter 6</span> Interactive component</h1>
 <div id="explaination" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Explaination</h2>
-<p>The interactive component allows the user to study the positions of a team on a specitic map. Positions are split in <em>CT</em> and <em>T</em> positions as both sides face each other. Hovering over points shows attacker, victim and weapon information.</p>
+<p>The interactive component allows the user to study the positions of a team on a specitic map. Positions are split in <em>CT</em> and <em>T</em> positions as both sides face each other. To generate each map csv data, we grouped the damages data by match id in the <a href="https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/code/create_subset.Rmd">create_subset.Rmd</a> file. The csv files are stored in the docs/D3/csv folders of the GitHub repository and are arranged by events, teams and maps.</p>
+<p>Hovering over points shows attacker, victim and weapon information.</p>
 </div>
 <div id="interactive-maps" class="section level2" number="6.2">
 <h2><span class="header-section-number">6.2</span> Interactive maps</h2>
@@ -693,6 +695,7 @@ show_heatmap(glob_side);
 
 </script>
 
+<p>Credits: 2d-density maps with D3 <a href="https://www.d3-graph-gallery.com/graph/density2d_shading.html">link</a></p>
 
 </div>
 </div>
