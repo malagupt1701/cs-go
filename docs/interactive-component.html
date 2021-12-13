@@ -104,7 +104,11 @@
 <li class="chapter" data-level="5.4" data-path="results.html"><a href="results.html#use-in-game-data-to-have-the-competitive-advantage"><i class="fa fa-check"></i><b>5.4</b> Use in-game data to have the competitive advantage</a></li>
 <li class="chapter" data-level="5.5" data-path="results.html"><a href="results.html#game-evolution-and-balance"><i class="fa fa-check"></i><b>5.5</b> Game evolution and balance</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
+<li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="interactive-component.html"><a href="interactive-component.html#explaination"><i class="fa fa-check"></i><b>6.1</b> Explaination</a></li>
+<li class="chapter" data-level="6.2" data-path="interactive-component.html"><a href="interactive-component.html#interactive-maps"><i class="fa fa-check"></i><b>6.2</b> Interactive maps</a></li>
+</ul></li>
 <li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -127,8 +131,13 @@
             <section class="normal" id="section-">
 <div id="interactive-component" class="section level1" number="6">
 <h1><span class="header-section-number">Chapter 6</span> Interactive component</h1>
+<div id="explaination" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Explaination</h2>
+<p>The interactive component allows the user to study the positions of a team on a specitic map. Positions are split in <em>CT</em> and <em>T</em> positions as both sides face each other. Hovering over points shows attacker, victim and weapon information.</p>
+</div>
+<div id="interactive-maps" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Interactive maps</h2>
 <p><a href="06-heatmap.html"><b>Click to see the interactive component in full size</b></a></p>
-<p>Hovering over points shows attacker, victim and weapon information.</p>
 <!DOCTYPE html>
 <meta charset="utf-8">
 
@@ -328,7 +337,7 @@
     </div>
 
 </div>
-
+<p style="text-align: center">  Hovering over points shows attacker, victim and weapon information.</p>
 <div "block"> <h4 id="title_text"></h4> </div>
 
 <!-- HEATMAP DIV -->
@@ -342,13 +351,11 @@ const margin = {top: 10, right: 30, bottom: 30, left: 40},
 width = 460 - margin.left - margin.right,
 height = 400 - margin.top - margin.bottom;
 //global map parameters
-//var glob_team="Vitality";
-//var glob_event="StarLadder Major Berlin 2019";
-//var glob_map="de_dust2";
-
-var glob_team="Astralis";
+var glob_team="Vitality";
 var glob_event="StarLadder Major Berlin 2019";
-var glob_map="de_overpass";
+var glob_map="de_dust2";
+
+
 var glob_side="CT"
 //scaling for each map
 var mapXY={"de_mirage":{"x":[-3050, 1450],"y":[-3050,1550]},"de_inferno":{"x":[-2050, 2510],"y":[-790,3600]},"de_dust2":{"x":[-2310, 1630],"y":[-950,3000]},"de_overpass":{"x":[-4680, 20],"y":[-3150,1500]},"de_cache":{"x":[-1700, 2900],"y":[-2000,2950]},"de_nuke":{"x":[-2950, 3300],"y":[-3950,2550]},"de_train":{"x":[-2300, 1920],"y":[-2100,2200]},"de_vertigo":{"x":[-3450, 300],"y":[-2750,2450]},"de_cbble":{"x":[-4000, 1050],"y":[-1850,3000]}};
@@ -683,6 +690,7 @@ show_heatmap(glob_side);
 </script>
 
 
+</div>
 </div>
             </section>
 
