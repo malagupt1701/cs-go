@@ -13,7 +13,7 @@ Of all the matches data, only the kills and damages data frames contained missin
 
 The kills data frame contains information about each confirmed kill by any of the 10 players of both teams.
 ```{r , fig.width=14, fig.height=8}
-data <- readRDS(file = "code/kills.Rda")
+data <- readRDS(file = "data/subset_kills.Rda")
 plot_missing(data, Percentflag  = TRUE)
 ```
 (Variables beginning with 'flash')
@@ -44,7 +44,7 @@ plot_missing(data, Percentflag  = TRUE)
 The damages data frame contains information about each damage a player receives. A damage results in less health points.
 
 ```{r , fig.width=14, fig.height=8}
-data <- readRDS(file = "code/damages.Rda")
+data <- readRDS(file = "data/subset_damages.Rda")
 plot_missing(data, Percentflag  = TRUE)
 ```
 Most damages (98 percent) are inflicted by a player (bullet or grenade damages). But about 2 percent of damages are not dealt by a player. Those are caused by the game environment: falling damage or bomb damage (no player is linked to a planted bomb). Pattern 2 shows the affected variables

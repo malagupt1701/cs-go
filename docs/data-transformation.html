@@ -80,7 +80,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#game-description"><i class="fa fa-check"></i><b>1.1</b> Game Description</a></li>
-<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#how-can-the-data-bring-answers-to-the-questions"><i class="fa fa-check"></i><b>1.2</b> How can the data bring answers to the questions?</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#how-can-the-data-bring-answers-to-the-following-questions"><i class="fa fa-check"></i><b>1.2</b> How can the data bring answers to the following questions?</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a>
 <ul>
@@ -108,7 +108,11 @@
 <li class="chapter" data-level="5.4" data-path="results.html"><a href="results.html#use-in-game-data-to-have-the-competitive-advantage"><i class="fa fa-check"></i><b>5.4</b> Use in-game data to have the competitive advantage</a></li>
 <li class="chapter" data-level="5.5" data-path="results.html"><a href="results.html#game-evolution-and-balance"><i class="fa fa-check"></i><b>5.5</b> Game evolution and balance</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
+<li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="interactive-component.html"><a href="interactive-component.html#explaination"><i class="fa fa-check"></i><b>6.1</b> Explaination</a></li>
+<li class="chapter" data-level="6.2" data-path="interactive-component.html"><a href="interactive-component.html#interactive-maps"><i class="fa fa-check"></i><b>6.2</b> Interactive maps</a></li>
+</ul></li>
 <li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -133,246 +137,28 @@
 <h1><span class="header-section-number">Chapter 3</span> Data transformation</h1>
 <div id="getting-readable-data" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Getting readable data</h2>
-<p>To generate readable data from the demo files, we used a python library to parse them in JSON files, resulting in 625 successful conversions and 20GB of pre-processed data.</p>
-<p>The pre-processed data is still very much dirty as some files are corrupted, and in-game technical pauses, warmup rounds, game restarts, etc, can mess up the format and add rounds. We still managed to clean the data with the python library cleaning functions.</p>
-<p>The following Python notebook explains the data structure of a generated JSON file: <a href="https://github.com/anhvung/EDAV_Project_Report/blob/main/Python%20notebooks/Understanding%20the%20data.ipynb" class="uri">https://github.com/anhvung/EDAV_Project_Report/blob/main/Python%20notebooks/Understanding%20the%20data.ipynb</a></p>
-<p>To narrow down the amount of data points, we chose to merge all the matches json files into 5 json files containing only information that we judge relevant for analysis : kills data, damages data, flashed data,and grenades data.</p>
+<p>To generate readable data from the demo files, we used a python <a href="https://github.com/pnxenopoulos/csgo">library</a> to parse them in JSON files, resulting in 625 successful conversions and 20GB of pre-processed data from the original 80+GB of data. <a href="link">Python notebook - pre-processing</a></p>
+<p>The pre-processed data is still very much dirty as some files are corrupted. Also in-game technical pauses, warmup rounds, game restarts, etc, can mess up the format and add rounds. We still managed to clean the data with the csgo python library cleaning functions.</p>
+<p>The following Python notebook explains the data structure of a generated JSON file: <a href="link">Python notebook - data structures</a></p>
+<p>To narrow down the amount of data points, we chose to merge all the matches json files into 5 json files containing information that we judged relevant for analysis : kills data, damages data, flashed data,and grenades data.</p>
+<p>To combine the json files and join the matches information such as score, winner and teams, we used the parsed html from <a href="http://hltv.org">HLTV</a> to cross the informations. <a href="link">Python notebook - combining json files</a></p>
+<p><a href="https://drive.google.com/drive/folders/1R86RveRkboHe123dH0ieMpk8U_hgZ6qH?usp=sharing">Lion drive link to the combined json files</a> (1GB)</p>
 </div>
 <div id="kills-data" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Kills data</h2>
-<pre><code>##    tick    seconds clockTime attackerSteamID attackerName attackerTeam
-## 1 37716 104.362205     00:11     7.65612e+16       gla1ve     Astralis
-## 2 37926 106.015748     00:09     7.65612e+16       Magisk     Astralis
-## 3 37990 106.519685     00:09     7.65612e+16       ottoNd        CR4ZY
-## 4 38690 112.031496     00:03     7.65612e+16       ottoNd        CR4ZY
-## 5 38802 112.913386     00:03     7.65612e+16        Xyp9x     Astralis
-## 6 39089   1.527559     00:39     7.65612e+16       gla1ve     Astralis
-##   attackerSide attackerX attackerY attackerZ attackerAreaID attackerAreaName
-## 1            T  864.6664  2632.073  137.5906           2822        BombsiteB
-## 2            T  621.7537  2638.161  160.0312            378        BombsiteB
-## 3           CT  498.7048  3103.697  206.0312           1973        BombsiteB
-## 4           CT  439.0452  3226.421  160.0312             45        BombsiteB
-## 5            T  668.1346  2453.711  140.9082            522        BombsiteB
-## 6            T 1312.8595  2643.319  139.1528            384           TSpawn
-##   attackerViewX attackerViewY victimSteamID victimName victimTeam victimSide
-## 1      9.981079      1.658936   7.65612e+16       nexa      CR4ZY         CT
-## 2    201.417847      8.025513   7.65612e+16  EspiranTo      CR4ZY         CT
-## 3    283.419800      7.388306   7.65612e+16     Magisk   Astralis          T
-## 4    278.613281      2.213745   7.65612e+16     device   Astralis          T
-## 5    106.528931      4.284668   7.65612e+16     ottoNd      CR4ZY         CT
-## 6     88.703613     12.376099   7.65612e+16    huNter-      CR4ZY         CT
-##     victimX  victimY  victimZ victimAreaID victimAreaName victimViewX
-## 1 1051.6113 2670.839 131.2516           89          Ruins   185.21851
-## 2  335.8351 2522.834 160.0312          372      BombsiteB    18.73169
-## 3  616.5831 2644.189 160.0312          378      BombsiteB    13.40332
-## 4  529.8006 2634.323 160.0312          121      BombsiteB    98.92090
-## 5  443.9947 3203.989 160.0312           45      BombsiteB   295.89478
-## 6 1309.7651 2874.181 127.2981           23          Ruins   280.22827
-##   victimViewY assisterSteamID assisterName assisterTeam assisterSide isSuicide
-## 1    2.037964              NA         &lt;NA&gt;         &lt;NA&gt;         &lt;NA&gt;     FALSE
-## 2    1.367798     7.65612e+16       gla1ve     Astralis            T     FALSE
-## 3    9.678955              NA         &lt;NA&gt;         &lt;NA&gt;         &lt;NA&gt;     FALSE
-## 4    3.175049              NA         &lt;NA&gt;         &lt;NA&gt;         &lt;NA&gt;     FALSE
-## 5    8.865967              NA         &lt;NA&gt;         &lt;NA&gt;         &lt;NA&gt;     FALSE
-## 6    1.318359              NA         &lt;NA&gt;         &lt;NA&gt;         &lt;NA&gt;     FALSE
-##   isTeamkill isWallbang penetratedObjects isFirstKill isHeadshot victimBlinded
-## 1      FALSE      FALSE                 0        TRUE       TRUE         FALSE
-## 2      FALSE      FALSE                 0       FALSE      FALSE         FALSE
-## 3      FALSE      FALSE                 0       FALSE      FALSE         FALSE
-## 4      FALSE      FALSE                 0       FALSE       TRUE         FALSE
-## 5      FALSE      FALSE                 0       FALSE      FALSE         FALSE
-## 6      FALSE      FALSE                 0       FALSE      FALSE         FALSE
-##   attackerBlinded flashThrowerSteamID flashThrowerName flashThrowerTeam
-## 1           FALSE                  NA             &lt;NA&gt;             &lt;NA&gt;
-## 2           FALSE                  NA             &lt;NA&gt;             &lt;NA&gt;
-## 3           FALSE                  NA             &lt;NA&gt;             &lt;NA&gt;
-## 4           FALSE                  NA             &lt;NA&gt;             &lt;NA&gt;
-## 5           FALSE                  NA             &lt;NA&gt;             &lt;NA&gt;
-## 6           FALSE                  NA             &lt;NA&gt;             &lt;NA&gt;
-##   flashThrowerSide noScope thruSmoke distance isTrade playerTradedName
-## 1             &lt;NA&gt;   FALSE     FALSE 191.0272   FALSE             &lt;NA&gt;
-## 2             &lt;NA&gt;   FALSE     FALSE 308.3015   FALSE             &lt;NA&gt;
-## 3             &lt;NA&gt;   FALSE     FALSE 476.6112    TRUE        EspiranTo
-## 4             &lt;NA&gt;   FALSE     FALSE 599.0136   FALSE             &lt;NA&gt;
-## 5             &lt;NA&gt;   FALSE     FALSE 783.2755    TRUE           device
-## 6             &lt;NA&gt;   FALSE     FALSE 231.1864   FALSE             &lt;NA&gt;
-##   playerTradedTeam playerTradedSteamID     weapon round_won_by
-## 1             &lt;NA&gt;                  NA     UMP-45     Astralis
-## 2             &lt;NA&gt;                  NA      AK-47     Astralis
-## 3            CR4ZY         7.65612e+16 Five-SeveN     Astralis
-## 4             &lt;NA&gt;                  NA Five-SeveN     Astralis
-## 5         Astralis         7.65612e+16     UMP-45     Astralis
-## 6             &lt;NA&gt;                  NA     UMP-45     Astralis
-##                         match_id   map_name round_num round_tot match_num
-## 1 0 astralis-vs-cr4zy-m1-inferno de_inferno         1        26         0
-## 2 0 astralis-vs-cr4zy-m1-inferno de_inferno         1        26         0
-## 3 0 astralis-vs-cr4zy-m1-inferno de_inferno         1        26         0
-## 4 0 astralis-vs-cr4zy-m1-inferno de_inferno         1        26         0
-## 5 0 astralis-vs-cr4zy-m1-inferno de_inferno         1        26         0
-## 6 0 astralis-vs-cr4zy-m1-inferno de_inferno         1        26         0
-##                    match_event    match_date match_team1 match_team2
-## 1 StarLadder Major Berlin 2019 1567269000000    Astralis       CR4ZY
-## 2 StarLadder Major Berlin 2019 1567269000000    Astralis       CR4ZY
-## 3 StarLadder Major Berlin 2019 1567269000000    Astralis       CR4ZY
-## 4 StarLadder Major Berlin 2019 1567269000000    Astralis       CR4ZY
-## 5 StarLadder Major Berlin 2019 1567269000000    Astralis       CR4ZY
-## 6 StarLadder Major Berlin 2019 1567269000000    Astralis       CR4ZY</code></pre>
+<p>The kills data stored in the <em>ALL_kills.json</em> file contains information on every kill that happened such as the player positions, weapon used etc.</p>
 </div>
 <div id="damages-data" class="section level2" number="3.3">
 <h2><span class="header-section-number">3.3</span> Damages data</h2>
-<pre><code>##    tick  seconds clockTime attackerSteamID attackerName attackerTeam
-## 1 26061 12.59055     01:43     7.65612e+16       device     Astralis
-## 2 26198 13.66929     01:42     7.65612e+16       gla1ve     Astralis
-## 3 26198 13.66929     01:42     7.65612e+16       gla1ve     Astralis
-## 4 26198 13.66929     01:42     7.65612e+16       gla1ve     Astralis
-## 5 34722 80.78740     00:35              NA         &lt;NA&gt;         &lt;NA&gt;
-## 6 35110 83.84252     00:32     7.65612e+16       gla1ve     Astralis
-##   attackerSide attackerX attackerY attackerZ attackerAreaID attackerAreaName
-## 1            T  210.7284  1745.365 122.03125             56           Banana
-## 2            T  111.8371  1143.532  85.16746            327           Banana
-## 3            T  111.8371  1143.532  85.16746            327           Banana
-## 4            T  111.8371  1143.532  85.16746            327           Banana
-## 5         &lt;NA&gt;        NA        NA        NA             NA             &lt;NA&gt;
-## 6            T  726.0350  2072.830 136.09784            213           Banana
-##   attackerViewX attackerViewY attackerStrafe victimSteamID victimName
-## 1      30.86609    359.252930          FALSE   7.65612e+16       nexa
-## 2     306.87012      1.521606          FALSE   7.65612e+16       nexa
-## 3     306.87012      1.521606          FALSE   7.65612e+16    huNter-
-## 4     306.87012      1.521606          FALSE   7.65612e+16  EspiranTo
-## 5            NA            NA             NA   7.65612e+16      LETN1
-## 6      73.50952     10.299683          FALSE   7.65612e+16  EspiranTo
-##   victimTeam victimSide   victimX  victimY   victimZ victimAreaID
-## 1      CR4ZY         CT  757.2257 2361.956 135.12869           65
-## 2      CR4ZY         CT  819.4413 2354.143 138.24274           65
-## 3      CR4ZY         CT  865.4528 2677.303 134.53307          220
-## 4      CR4ZY         CT  937.9924 2781.969 128.19894          221
-## 5      CR4ZY         CT 2075.0325 -403.477  95.30235           26
-## 6      CR4ZY         CT  343.9606 2517.644 160.03125          372
-##   victimAreaName victimViewX victimViewY     weapon hpDamage hpDamageTaken
-## 1      BombsiteB   255.16846   2.8674316 HE Grenade       24            24
-## 2      BombsiteB   237.34314   1.9006348 HE Grenade       19            19
-## 3      BombsiteB   256.28906   2.0654297 HE Grenade       15            15
-## 4      BombsiteB   247.59338   0.1098633 HE Grenade        1             1
-## 5            Pit    82.30408   3.0102539      World        2             2
-## 6      BombsiteB    17.37488   2.2851562    Molotov        8             8
-##   armorDamage armorDamageTaken hitGroup round_won_by
-## 1           8                8  Generic     Astralis
-## 2           6                6  Generic     Astralis
-## 3           5                5  Generic     Astralis
-## 4           0                0  Generic     Astralis
-## 5           0                0  Generic     Astralis
-## 6           0                0  Generic     Astralis
-##                         match_id   map_name round_num round_tot match_num
-## 1 0 astralis-vs-cr4zy-m1-inferno de_inferno         1        26         0
-## 2 0 astralis-vs-cr4zy-m1-inferno de_inferno         1        26         0
-## 3 0 astralis-vs-cr4zy-m1-inferno de_inferno         1        26         0
-## 4 0 astralis-vs-cr4zy-m1-inferno de_inferno         1        26         0
-## 5 0 astralis-vs-cr4zy-m1-inferno de_inferno         1        26         0
-## 6 0 astralis-vs-cr4zy-m1-inferno de_inferno         1        26         0
-##                    match_event    match_date match_team1 match_team2
-## 1 StarLadder Major Berlin 2019 1567269000000    Astralis       CR4ZY
-## 2 StarLadder Major Berlin 2019 1567269000000    Astralis       CR4ZY
-## 3 StarLadder Major Berlin 2019 1567269000000    Astralis       CR4ZY
-## 4 StarLadder Major Berlin 2019 1567269000000    Astralis       CR4ZY
-## 5 StarLadder Major Berlin 2019 1567269000000    Astralis       CR4ZY
-## 6 StarLadder Major Berlin 2019 1567269000000    Astralis       CR4ZY</code></pre>
+<p>The damages data stored in the <em>ALL_damages.json</em> file contains information on every damage dealt such as the player positions, weapon used, damage dealt etc.</p>
 </div>
 <div id="flashes-data" class="section level2" number="3.4">
 <h2><span class="header-section-number">3.4</span> Flashes data</h2>
-<pre><code>##    tick  seconds clockTime attackerSteamID attackerName attackerTeam
-## 1 29282 37.95276     01:18     7.65612e+16      huNter-        CR4ZY
-## 2 29282 37.95276     01:18     7.65612e+16      huNter-        CR4ZY
-## 3 34172 76.45669     00:39     7.65612e+16       Magisk     Astralis
-## 4 34172 76.45669     00:39     7.65612e+16       Magisk     Astralis
-## 5 34172 76.45669     00:39     7.65612e+16       Magisk     Astralis
-## 6 36109 91.70866     00:24     7.65612e+16       device     Astralis
-##   attackerSide attackerX attackerY attackerZ attackerAreaID attackerAreaName
-## 1           CT 1045.0680 2697.0793  127.9407             89            Ruins
-## 2           CT 1045.0680 2697.0793  127.9407             89            Ruins
-## 3            T  110.8116 1569.6041  132.0312            975           Banana
-## 4            T  110.8116 1569.6041  132.0312            975           Banana
-## 5            T  110.8116 1569.6041  132.0312            975           Banana
-## 6            T 1361.9518  365.4273  154.3608             31         TopofMid
-##   attackerViewX attackerViewY playerSteamID playerName playerTeam playerSide
-## 1      339.9335      8.135376   7.65612e+16     device   Astralis          T
-## 2      339.9335      8.135376   7.65612e+16     Magisk   Astralis          T
-## 3       78.3490    315.164795   7.65612e+16  EspiranTo      CR4ZY         CT
-## 4       78.3490    315.164795   7.65612e+16     Magisk   Astralis          T
-## 5       78.3490    315.164795   7.65612e+16     ottoNd      CR4ZY         CT
-## 6      204.4501     13.623047   7.65612e+16      LETN1      CR4ZY         CT
-##     playerX   playerY  playerZ playerAreaID playerAreaName playerViewX
-## 1  235.2458 1724.3020 122.0312           56         Banana    42.09412
-## 2  999.9688 1917.9688 152.2162          527         Banana    68.09875
-## 3  163.1098 2751.4536 160.0312           12      BombsiteB   336.76941
-## 4  110.8116 1569.6041 132.0312          975         Banana    78.34900
-## 5 1018.5582 2781.9829 128.0193          221      BombsiteB   230.88867
-## 6 2204.4675 -126.7759 125.0445          575      Underpass   157.30225
-##   playerViewY flashDuration round_won_by                       match_id
-## 1  359.373779     0.7473292     Astralis 0 astralis-vs-cr4zy-m1-inferno
-## 2    7.805786     1.8713573     Astralis 0 astralis-vs-cr4zy-m1-inferno
-## 3    2.340088     4.3084595     Astralis 0 astralis-vs-cr4zy-m1-inferno
-## 4  315.164795     0.5611104     Astralis 0 astralis-vs-cr4zy-m1-inferno
-## 5  359.862671     4.5073684     Astralis 0 astralis-vs-cr4zy-m1-inferno
-## 6  359.747314     3.0786998     Astralis 0 astralis-vs-cr4zy-m1-inferno
-##     map_name round_num round_tot match_num                  match_event
-## 1 de_inferno         1        26         0 StarLadder Major Berlin 2019
-## 2 de_inferno         1        26         0 StarLadder Major Berlin 2019
-## 3 de_inferno         1        26         0 StarLadder Major Berlin 2019
-## 4 de_inferno         1        26         0 StarLadder Major Berlin 2019
-## 5 de_inferno         1        26         0 StarLadder Major Berlin 2019
-## 6 de_inferno         1        26         0 StarLadder Major Berlin 2019
-##      match_date match_team1 match_team2
-## 1 1567269000000    Astralis       CR4ZY
-## 2 1567269000000    Astralis       CR4ZY
-## 3 1567269000000    Astralis       CR4ZY
-## 4 1567269000000    Astralis       CR4ZY
-## 5 1567269000000    Astralis       CR4ZY
-## 6 1567269000000    Astralis       CR4ZY</code></pre>
+<p>The flashes data stored in the <em>ALL_flashes.json file</em> contains information on every flash grenade thrown.</p>
 </div>
 <div id="grenades-data" class="section level2" number="3.5">
 <h2><span class="header-section-number">3.5</span> grenades data</h2>
-<pre><code>##   throwTick destroyTick throwSeconds destroySeconds throwerSteamID throwerName
-## 1     25110       27998     5.102362       27.84252    7.65612e+16      Magisk
-## 2     25482       25742     8.031496       10.07874    7.65612e+16     dupreeh
-## 3     25622       25876     9.133858       11.13386    7.65612e+16      device
-## 4     25852       26573    10.944882       16.62205    7.65612e+16      device
-## 5     25989       26710    12.023622       17.70079    7.65612e+16      gla1ve
-## 6     26402       27123    15.275591       20.95276    7.65612e+16        nexa
-##   throwerTeam throwerSide  throwerX  throwerY  throwerZ throwerAreaID
-## 1    Astralis           T -928.2812  540.0312  40.50000           133
-## 2    Astralis           T -184.7812 -108.6875  99.71875           147
-## 3    Astralis           T  137.8750 1059.0312 152.84375          2635
-## 4    Astralis           T  159.6250 1427.3125 175.96875            73
-## 5    Astralis           T  151.9375 1417.6250 176.21875            73
-## 6       CR4ZY          CT  814.0938 2281.6562 207.65625            65
-##   throwerAreaName   grenadeType   grenadeX  grenadeY grenadeZ grenadeAreaID
-## 1          TSpawn Decoy Grenade 1414.18750  497.9375 134.2812            31
-## 2       SecondMid       Molotov 1175.71875   45.0000 258.0000           244
-## 3          Banana       Molotov  545.46875 2114.4062 136.6562             9
-## 4          Banana    HE Grenade  747.87500 2220.1875 136.9062            65
-## 5          Banana    HE Grenade  813.18750 2518.6875 138.2500            22
-## 6       BombsiteB    HE Grenade  -75.96875 1337.2500 144.4375           250
-##   grenadeAreaName     UniqueID round_won_by                       match_id
-## 1        TopofMid 6.768616e+18     Astralis 0 astralis-vs-cr4zy-m1-inferno
-## 2      Apartments 4.270786e+18     Astralis 0 astralis-vs-cr4zy-m1-inferno
-## 3          Banana 8.790285e+18     Astralis 0 astralis-vs-cr4zy-m1-inferno
-## 4       BombsiteB 2.291242e+18     Astralis 0 astralis-vs-cr4zy-m1-inferno
-## 5       BombsiteB 3.907963e+18     Astralis 0 astralis-vs-cr4zy-m1-inferno
-## 6          Banana 6.058356e+18     Astralis 0 astralis-vs-cr4zy-m1-inferno
-##     map_name round_num round_tot match_num                  match_event
-## 1 de_inferno         1        26         0 StarLadder Major Berlin 2019
-## 2 de_inferno         1        26         0 StarLadder Major Berlin 2019
-## 3 de_inferno         1        26         0 StarLadder Major Berlin 2019
-## 4 de_inferno         1        26         0 StarLadder Major Berlin 2019
-## 5 de_inferno         1        26         0 StarLadder Major Berlin 2019
-## 6 de_inferno         1        26         0 StarLadder Major Berlin 2019
-##      match_date match_team1 match_team2
-## 1 1567269000000    Astralis       CR4ZY
-## 2 1567269000000    Astralis       CR4ZY
-## 3 1567269000000    Astralis       CR4ZY
-## 4 1567269000000    Astralis       CR4ZY
-## 5 1567269000000    Astralis       CR4ZY
-## 6 1567269000000    Astralis       CR4ZY</code></pre>
+<p>The grenades data stored in the <em>ALL_grenades.json file</em> contains information on every grenades thrown that is not a flash grenade.</p>
 
 </div>
 </div>

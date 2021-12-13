@@ -3,4 +3,8 @@
 .RData
 .Ruserdata
 Data/
+data/ALL_damages.json
+data/ALL_flashes.json
+data/ALL_grenades.json
+data/ALL_kills.json
 code/data

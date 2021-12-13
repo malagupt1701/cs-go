@@ -53,6 +53,10 @@
 
 <link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="libs/parallel-coordinates-2.1.8/parcoords.css" rel="stylesheet" />
+<script src="libs/parcoords-binding-1.0.0/parcoords.js"></script>
+<script src="libs/d3-5.16.0/d3.min.js"></script>
 
 
 
@@ -76,7 +80,7 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#game-description"><i class="fa fa-check"></i><b>1.1</b> Game Description</a></li>
-<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#how-can-the-data-bring-answers-to-the-questions"><i class="fa fa-check"></i><b>1.2</b> How can the data bring answers to the questions?</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#how-can-the-data-bring-answers-to-the-following-questions"><i class="fa fa-check"></i><b>1.2</b> How can the data bring answers to the following questions?</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a>
 <ul>
@@ -305,7 +309,7 @@
     <div class="block">
         <p>Show attacker positions</p>
         <label class="switch">
-            <input type="checkbox"id="switch_att" onclick="toggle(this,'#d3_attackpoint',0.2)">
+            <input type="checkbox"id="switch_att" onclick="toggle(this,'#d3_attackpoint',0.5)">
             <span class="slider round"></span>
         </label>
     </div>
@@ -321,7 +325,7 @@
     <div class="block">
         <p>Show trajectories</p>
         <label class="switch">
-            <input type="checkbox" id="switch_traject" onclick="toggle(this,'#d3_traject',0.5)">
+            <input type="checkbox" id="switch_traject" onclick="toggle(this,'#d3_traject',0.2)">
             <span class="slider round"></span>
         </label>
 
@@ -475,7 +479,7 @@ function show_heatmap(side){
      .attr("y2", d=>y(d.victimY))
      .attr("stroke-width", 0.2)
      .attr("stroke", "black")
-     .attr('opacity',show_traject)
+     .attr('opacity',show_traject);
 
 
       //attacker points

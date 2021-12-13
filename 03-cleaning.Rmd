@@ -2,34 +2,36 @@
 
 ## Getting readable data
 
-To generate readable data from the demo files, we used a python library to parse them in JSON files, resulting in 625 successful conversions and 20GB of pre-processed data. 
+To generate readable data from the demo files, we used a python [library](https://github.com/pnxenopoulos/csgo) to parse them in JSON files, resulting in 625 successful conversions and 20GB of pre-processed data from the original 80+GB of data. [Python notebook - pre-processing](link)
 
-The pre-processed data is still very much dirty as some files are corrupted, and in-game technical pauses, warmup rounds, game restarts, etc,  can mess up the format and add rounds. We still managed to clean the data with the python library cleaning functions.
+The pre-processed data is still very much dirty as some files are corrupted. Also in-game technical pauses, warmup rounds, game restarts, etc,  can mess up the format and add rounds. We still managed to clean the data with the csgo python library cleaning functions.
 
-The following Python notebook explains the data structure of a generated JSON file: https://github.com/anhvung/EDAV_Project_Report/blob/main/Python%20notebooks/Understanding%20the%20data.ipynb
+The following Python notebook explains the data structure of a generated JSON file: [Python notebook - data structures](link)
 
-To narrow down the amount of data points, we chose to merge all the matches json files into 5 json files containing only information that we judge relevant for analysis : kills data, damages data, flashed data,and grenades data.
+To narrow down the amount of data points, we chose to merge all the matches json files into 5 json files containing information that we judged relevant for analysis : kills data, damages data, flashed data,and grenades data.
+
+To combine the json files and join the matches information such as score, winner and teams, we used the parsed html from [HLTV](http://hltv.org) to cross the informations. [Python notebook - combining json files](link)
 
 
-
+[Lion drive link to the combined json files](https://drive.google.com/drive/folders/1R86RveRkboHe123dH0ieMpk8U_hgZ6qH?usp=sharing) (1GB)
 
 ## Kills data
 
-
+The kills data stored in the *ALL_kills.json* file contains information on every kill that happened such as the player positions, weapon used etc.
 
 
 ## Damages data
 
-
+The damages data stored in the *ALL_damages.json* file contains information on every damage dealt such as the player positions, weapon used, damage dealt etc.
 
 
 
 ## Flashes data
 
-
+The flashes data stored in the *ALL_flashes.json file* contains information on every flash grenade thrown.
 
 
 ## grenades data
 
-
+The grenades data stored in the *ALL_grenades.json file* contains information on every grenades thrown that is not a flash grenade.
 

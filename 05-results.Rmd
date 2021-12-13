@@ -13,10 +13,10 @@ conflict_prefer("summarise", "dplyr")
 conflict_prefer("summarize", "dplyr")
 conflict_prefer("filter", "dplyr")
 conflict_prefer("rename", "dplyr")
-grenades <- jsonlite::fromJSON("code/data/ALL_grenades.json", simplifyVector = TRUE)
-kills <- jsonlite::fromJSON("code/data/ALL_kills.json", simplifyVector = TRUE)
-damages <- jsonlite::fromJSON("code/data/ALL_damages.json", simplifyVector = TRUE)
-flashes <- jsonlite::fromJSON("code/data/ALL_flashes.json", simplifyVector = TRUE)
+grenades <- jsonlite::fromJSON("data/ALL_grenades.json", simplifyVector = TRUE)
+kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
+damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
+flashes <- jsonlite::fromJSON("data/ALL_flashes.json", simplifyVector = TRUE)
 ```
 
 
@@ -153,7 +153,7 @@ Indicators with directions opposite to the loosing matches and closer to the cor
 
 
 
-Note that there is no indicator with a strong correlation (more than 0.7) with the score difference. But combining those indicators can still led to a better overall rating score. We are going to achieve it with a multi-variable linear regression.
+Note that there is no indicator with a strong correlation (more than 0.7) with the score difference. But combining those indicators can still lead to a better overall rating score. We are going to achieve it with a multi-variable linear regression.
 
 ```{r rating}
 
@@ -208,7 +208,7 @@ ggtitle("Team ratings at each event")  +
 geom_bar(stat="identity")+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
-As expected the winner team is consistently in the top team ratings. However sometimes, some team get even better rating than the winner. This is explained by the fact that some teams have a solid performance throughout the tournament, only to get eliminated in the final stage. For example, in the Eleague Major 2017 event, Virtus.Pro was eliminated by Astralis in the finals, and Faze Clan got eliminated in the quarter-finals.
+As expected the winner team is consistently in the top team ratings. However sometimes, some teams get even better ratings than the winner. This is explained by the fact that some teams have a solid performance throughout the tournament, only to get eliminated in the final stage. For example, in the Eleague Major 2017 event, Virtus.Pro was eliminated by Astralis in the finals, and Faze Clan got eliminated in the quarter-finals.
 
 ## Players performance
 
@@ -254,9 +254,9 @@ A <- playerstat  %>%  filter(match_played>10)  %>%  top_n(-30,rating) %>% arrang
 library(patchwork)
 A+B
 ```
-The player Autimatic has the highest rating of all, and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2019 and 2020 by the [HLTV](hltv.org) website means that our combined rating reflects the differnet ratings of other sites such as HLTV.
+The player Autimatic has the highest rating of all, and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2019 and 2020 by the [HLTV](https://hltv.org) website means that our combined rating reflects the different ratings of other sites such as HLTV.
 
-It is often hard to compare teams and players across events because of players often change teams. One way to cross the informations is to vizualise the teams of a player:
+It is often hard to compare teams and players across events because players often change teams. One way to cross the information is to visualize the teams of a player:
 
 ```{r interactalluv}
 library(parcoords)
@@ -324,7 +324,7 @@ One of the most successful teams is Astralis with 3 Major wins. A core of 3 play
 
 ## Use in-game data to have the competitive advantage
 
-The matches game data is available everyone and pro teams always watch their opponent previous games to come up with strategies to counter their opponents.
+The game data of matches is available to everyone and pro teams always watch their opponent's previous games to come up with strategies.
 
 However, watching games takes time. Some parts of this process can be automated. 
 
@@ -332,7 +332,7 @@ Even though it does not give informations such as teams reactions to specific ev
 
 For instance, one of the hardest player to play against is s1mple, especially with the AWP weapon because of its range. Parsing the game data allows to know where players can expect s1mple to be and where he can be aiming at with his weapon.  
 
-```{r densitymap , fig.height=8}
+```{r densitymap , fig.height=8, fig.height=10}
 #heatmpas
 
 
@@ -340,7 +340,7 @@ For instance, one of the hardest player to play against is s1mple, especially wi
 library(ggpubr)
 library(jpeg)
 
-img <- readJPEG("code/maps/de_mirage_light.jpg")
+img <- readJPEG("img/de_mirage_light.jpg")
 
 
 
@@ -390,11 +390,12 @@ stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=294.1
 
 a+b
 ```
-Knowing the habits of a player and the positions where it is dangerous to be at can avoid being surprised by the enemy and helps to come up with strategies to counter the enemy team.
+
+Knowing the habits of a player and the positions where it is dangerous to be can avoid being surprised by the enemy and helps to come up with strategies to counter the enemy team.
 
 ## Game evolution and balance
 
-People often attribute the success and longevity of the CSGO game to its balance, meaning at both teams have an equal chance of winning. However, this is difficult to achieve as it depends on multiple factors such as the weapon characteristics and map layout.
+People often attribute the success and longevity of the CSGO game to its balance, meaning that both teams have an equal chance of winning. However, this is difficult to achieve as it depends on multiple factors such as the weapon characteristics and map layout.
 
 Because the developpers have been continuously updating the maps and weapon characterstics, the probablity to win a round on the T/CT sides has changed over the years.
 
@@ -419,6 +420,7 @@ labs(color='Side')
 
 
 ```
+
 The drop in the win percentage differences after 2016 can be attributed to the update of the nuke, inferno and overpass maps. Maps updates often include changes in the layout to give more advantage to a given side.
 
 ```{r mapwinrates,  fig.height=8,fig.width=8}
@@ -434,7 +436,7 @@ labs(title = "Winrates for each map", x = "Events",  y = "Winrate (percentage)")
 labs(color='Side') 
 
 ```
-Nuke as been removed from the official maps after Katowice 2015 and reintroduced for Cologne 2016. It was known to greatly favor the CT side, often forcing the team starting on the T side to have an impressing comeback after switching sides on the half time.
+Nuke as been removed from the official maps after Katowice 2015 and reintroduced for Cologne 2016. It was known to greatly favor the CT side, often forcing the team starting on the T side to have an impressive comeback after switching sides on the half time.
 But after the nuke map update the balance greatly improved.
 
 Note that the map pool changes for every event. The latest map being introduced is vertigo. Because it is a new map, it is not as balanced as the other ones. 
@@ -482,9 +484,10 @@ geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, vjust =
 
 
 ```
-Change the developers change a weapon's characteristic such as damage output, it can lead to a drop or spike in popularity.
 
-For example,in 2017 they tried to increase the usage of smg type weapons by increasing their damage output. As a result, the ump was often used by teams when they could not get a rifle. But complains from pro players meant that the update was reverted.
+When the developers change a weapon's characteristic such as damage output, it can lead to a drop or spike in popularity.
+
+For example, in 2017 developers tried to increase the usage of smg type weapons by increasing their damage output. As a result, the ump was often used by teams when they could not get a rifle. But complains from pro players meant that the update was reverted.
 
 The same can be said for the cz-75 in 2018. Also, the p250, five-seven and tec-9 had their damage and accuracy decreased over the years and resulted in a drop in usages by the pro players.
 

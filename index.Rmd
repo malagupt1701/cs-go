@@ -12,16 +12,22 @@ With growing organizations and sponsors backing the players, the top teams have 
 Data generated from thousands of matches can help viewers understand the game, and shape how future teams are going to play strategically.
 
 ## Game Description
+
 CSGO is a first-person shooter video game where two teams of 5 players compete to achieve a variety of objectives.
-These two teams play as both the Terrorist (T) and Counter- Terrorist (CT) sides over the course of a professional match. On each map, teams are
-initially assigned T or CT and then play for 15 rounds as their assigned side. Teams switch sides after the 15th round. The first team to win 16 rounds in either wins the match. 
+These two teams play as both the Terrorist (T) and Counter- Terrorist (CT) sides over the course of a professional match. On each map, teams are initially assigned to the T or CT side and then play for 15 rounds as their assigned side. Teams switch sides after the 15th round. The first team to win 16 rounds wins the match. 
+
 A professional match consists of a collection of performances on one or more maps, where maps are standardized and selected
 from a known pool of seven maps. Players must purchase armor, weapons, defuse or rescue kits, and manage their in-game economy to maximize their chance of success.
-The overall aim of the game being to assassinate the other team whilst successfully completing side objectives.
+
+The overall aim of the game being to eliminate the other team whilst successfully completing side objectives.
 Terrorist Objectives: plant bombs, take hostages, and assassinate opponents.
 Counter-Terrorists Objectives: defuse bombs, rescue hostages, and assassinate opponents.
 
-##  How can the data bring answers to the questions?
-- Game analysts and players traditionally only watch the demo replays to study teams and player behaviors. Data can help automate this process by showing some players’ habits. For instance,  we could look at the buying habits of a team, their preferential positions on maps, grenade throws, etc.
-- Data can help understand the performance of players and teams by calculating some metrics such as accuracy, teamplay flashes, trades, assists, etc. Those metrics can be combined to create a global rating.
+##  How can the data bring answers to the following questions?
+
+
+- Data can help understand the performance of players and teams by calculating some metrics. Those metrics can be combined to create a global rating.
+
+- Game analysts and players traditionally only watch the demo replays to study teams and player behaviors. Data can help automate this process by showing some players’ habits. 
+
 - Developers have tried to change weapon behaviors, game economy, maps, and player movements to make the game more balanced.  Despite numerous updates since its release 10 years ago, players constantly give their feedback to make it evolve. Having a look at win rates in different situations throughout the years can help understand the updates, and shed light on potential fixes that can be made.
