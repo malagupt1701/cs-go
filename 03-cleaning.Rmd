@@ -11,29 +11,25 @@ The following Python notebook explains the data structure of a generated JSON fi
 To narrow down the amount of data points, we chose to merge all the matches json files into 5 json files containing only information that we judge relevant for analysis : kills data, damages data, flashed data,and grenades data.
 
 
-```{r}
-#Loading json files 
-library(jsonlite)
-library(tidyverse)
-grenades <- jsonlite::fromJSON("code/data/ALL_grenades.json", simplifyVector = TRUE)
-kills <- jsonlite::fromJSON("code/data/ALL_kills.json", simplifyVector = TRUE)
-damages <- jsonlite::fromJSON("code/data/ALL_damages.json", simplifyVector = TRUE)
-flashes <- jsonlite::fromJSON("code/data/ALL_flashes.json", simplifyVector = TRUE)
-```
+
 
 ## Kills data
 
-kills.head()
+
+
 
 ## Damages data
 
-damages.head()
+
+
+
 
 ## Flashes data
 
-flashes.head()
+
+
 
 ## grenades data
 
-grenades.head()
+
 

@@ -24,7 +24,7 @@
 <meta name="author" content="Anh-Vu Nguyen, Malaika Gupta, Wael Boukhobza" />
 
 
-<meta name="date" content="2021-12-12" />
+<meta name="date" content="2021-12-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -53,6 +53,10 @@
 
 <link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="libs/parallel-coordinates-2.1.8/parcoords.css" rel="stylesheet" />
+<script src="libs/parcoords-binding-1.0.0/parcoords.js"></script>
+<script src="libs/d3-5.16.0/d3.min.js"></script>
 
 
 
@@ -73,7 +77,11 @@
 <li><a href="./">CSGO match analysis</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#game-description"><i class="fa fa-check"></i><b>1.1</b> Game Description</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#how-can-the-data-bring-answers-to-the-questions"><i class="fa fa-check"></i><b>1.2</b> How can the data bring answers to the questions?</a></li>
+</ul></li>
 <li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a>
 <ul>
 <li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#what-match-to-analyse"><i class="fa fa-check"></i><b>2.1</b> What match to analyse?</a></li>
@@ -92,7 +100,14 @@
 <li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#kills-data-1"><i class="fa fa-check"></i><b>4.1</b> Kills data</a></li>
 <li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#damages-data-1"><i class="fa fa-check"></i><b>4.2</b> Damages data</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
+<li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="results.html"><a href="results.html#evaluate-the-performance-of-teams-and-players-with-a-new-rating"><i class="fa fa-check"></i><b>5.1</b> Evaluate the performance of teams and players with a new rating</a></li>
+<li class="chapter" data-level="5.2" data-path="results.html"><a href="results.html#teams-performance"><i class="fa fa-check"></i><b>5.2</b> Teams performance</a></li>
+<li class="chapter" data-level="5.3" data-path="results.html"><a href="results.html#players-performance"><i class="fa fa-check"></i><b>5.3</b> Players performance</a></li>
+<li class="chapter" data-level="5.4" data-path="results.html"><a href="results.html#use-in-game-data-to-have-the-competitive-advantage"><i class="fa fa-check"></i><b>5.4</b> Use in-game data to have the competitive advantage</a></li>
+<li class="chapter" data-level="5.5" data-path="results.html"><a href="results.html#game-evolution-and-balance"><i class="fa fa-check"></i><b>5.5</b> Game evolution and balance</a></li>
+</ul></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
 <li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
 <li class="divider"></li>
@@ -121,7 +136,7 @@ Of all the matches data, only the kills and damages data frames contained missin
 <div id="kills-data-1" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> Kills data</h2>
 <p>The kills data frame contains information about each confirmed kill by any of the 10 players of both teams.
-<img src="finalproj_files/figure-html/unnamed-chunk-6-1.png" width="1344" />
+<img src="finalproj_files/figure-html/unnamed-chunk-11-1.png" width="1344" />
 (Variables beginning with ‘flash’)</p>
 <p>Flash grenades are thrown to temporarily blind the enemy players.
 The missing data is expected: when a player is killed, it has not necessarily been flashed by a flash grenade before (patterns 1,2,3,5 in the graph below). We can see that the vast majority of kills are done without the victim being flashed. Less than 10 percent of the kills are done with the help of flash grenades (patterns 4,6 in the graph below).</p>
@@ -130,14 +145,14 @@ The missing data is expected: when a player is killed, it has not necessarily be
 <p>(Variables beginning with ‘playerTraded’)</p>
 <p>A player is traded when one of his teammates get an immediate revenge on the enemy player who got the initial kill (patterns 3,5,6 in the graph below). Again, about 15 percent of the kills are traded. A trade is important because it ensures that the other team does not get the numerical advantage.</p>
 <p>Surprisingly, there are no complete cases the 30 sampled matches i.e there are no kills with all three previous points at the same time</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-7-1.png" width="576" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-12-1.png" width="576" /></p>
 </div>
 <div id="damages-data-1" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> Damages data</h2>
 <p>The damages data frame contains information about each damage a player receives. A damage results in less health points.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-8-1.png" width="1344" />
+<p><img src="finalproj_files/figure-html/unnamed-chunk-13-1.png" width="1344" />
 Most damages (98 percent) are inflicted by a player (bullet or grenade damages). But about 2 percent of damages are not dealt by a player. Those are caused by the game environment: falling damage or bomb damage (no player is linked to a planted bomb). Pattern 2 shows the affected variables</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-9-1.png" width="576" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-14-1.png" width="576" /></p>
 
 </div>
 </div>

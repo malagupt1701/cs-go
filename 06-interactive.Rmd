@@ -1,8 +1,10 @@
 # Interactive component
 
-<a href="06-heatmap.html">Click to see the interactive component in full size</a>
+<a href="06-heatmap.html"><b>Click to see the interactive component in full size</b></a>
+
+Hovering over points shows attacker, victim and weapon information.
+
 
 ```{r, echo=FALSE}
 htmltools::includeHTML("docs/06-heatmap.html")
 ```
-

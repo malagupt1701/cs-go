@@ -182,9 +182,7 @@ playerstat #WAEL #chaque match
 playerstat <- playerstat %>%  filter(!is.na(rating)) %>% group_by(attackerSteamID) %>%  summarize(name=last(name),rating=mean(rating),match_played=n())
 playerstat %>% filter(name=="ZywOo")
 
-oldplayers <- playerstat[order(playerstat$match_played, decreasing=TRUE), ] %>% top_n(5)
-oldplayers
-oldnames <- oldplayers$name   
+ 
 ```
 ```{r}
 playerstat %>%  top_n(30,rating) %>% arrange(rating) %>% mutate(name = factor(name, levels = .$name)) %>% ggplot(., aes(rating, name)) +
