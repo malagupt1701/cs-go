@@ -13,21 +13,21 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+```{r}
+#This is how to load json files 
+library(jsonlite)
+library(tidyverse)
+
+damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
+
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 ```{r}
-library(tidyverse)
+
 damages
 heat_kills <- damages %>%  filter(match_event=="StarLadder Major Berlin 2019") %>%  filter(map_name == "de_inferno" ) 
 
@@ -56,21 +56,18 @@ for(event in events){
        
       
       #print(paste("D3/csv",event,team,"team", sep="/"))
-      dir.create(paste("D3/csv",event,team,map, sep="/"), showWarnings = TRUE,recursive=TRUE)
+      dir.create(paste("../docs/D3/csv",event,team,map, sep="/"), showWarnings = TRUE,recursive=TRUE)
       
       temp <- heatmap %>%  filter(map_name==map) %>% filter(attackerSide=="CT")
       temp <- temp[complete.cases(temp), ]
-      write.csv(temp[,c("attackerX","attackerY","victimSide","victimX","victimY","attackerName","victimName","weapon")],paste("D3/csv",event,team,map,paste(event,team,map,"CT","csv",sep="."), sep="/"), row.names = FALSE, quote=FALSE)
+      write.csv(temp[,c("attackerX","attackerY","victimSide","victimX","victimY","attackerName","victimName","weapon")],paste("../docs/D3/csv",event,team,map,paste(event,team,map,"CT","csv",sep="."), sep="/"), row.names = FALSE, quote=FALSE)
       
       temp <- heatmap %>%  filter(map_name==map) %>% filter(attackerSide=="T")
       temp <- temp[complete.cases(temp), ]
-      write.csv(temp[,c("attackerX","attackerY","victimSide","victimX","victimY","attackerName","victimName","weapon")],paste("D3/csv",event,team,map,paste(event,team,map,"T","csv",sep="."), sep="/"), row.names = FALSE, quote=FALSE)
+      write.csv(temp[,c("attackerX","attackerY","victimSide","victimX","victimY","attackerName","victimName","weapon")],paste("../docs/D3/csv",event,team,map,paste(event,team,map,"T","csv",sep="."), sep="/"), row.names = FALSE, quote=FALSE)
     }
   }
 }
-
-
-
 
 
 
@@ -79,31 +76,31 @@ for(event in events){
 
 # generating json file for d3
 ```{r}
-json <- vector(mode="list", length=0)
-for(event in events){
-  print(event)
-  
-  heat_kills <- damages %>%  filter(match_event==event)
- 
-   teams <-levels( factor( heat_kills$attackerTeam) )
-   eventteams <- vector(mode="list", length=0)
-  for(team in teams){
-    
-    heatmap <- heat_kills %>%filter(attackerTeam==team)
-     maps <-levels( factor( heatmap$map_name) )
-    mapsjson  <- vector(mode="list", length=0)
-     for(map in maps){
-       mapsjson[[map]] <- map
-     }
-     
-      eventteams[[team]] <- mapsjson
-  }
-   json[[event]] <-eventteams
-}
-
-jsonData <- toJSON(json)
-  
-# writing into JSON file
-write(jsonData, "D3/eventteams.json") 
+# json <- vector(mode="list", length=0)
+# for(event in events){
+#   print(event)
+#   
+#   heat_kills <- damages %>%  filter(match_event==event)
+#  
+#    teams <-levels( factor( heat_kills$attackerTeam) )
+#    eventteams <- vector(mode="list", length=0)
+#   for(team in teams){
+#     
+#     heatmap <- heat_kills %>%filter(attackerTeam==team)
+#      maps <-levels( factor( heatmap$map_name) )
+#     mapsjson  <- vector(mode="list", length=0)
+#      for(map in maps){
+#        mapsjson[[map]] <- map
+#      }
+#      
+#       eventteams[[team]] <- mapsjson
+#   }
+#    json[[event]] <-eventteams
+# }
+# 
+# jsonData <- toJSON(json)
+#   
+# # writing into JSON file
+# write(jsonData, "D3/eventteams.json") 
 ```
 

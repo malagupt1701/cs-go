@@ -1,6 +1,6 @@
 # Missing values
 ```{r, include=FALSE}
-source('plot_missing.R')
+source('code/plot_missing.R')
 knitr::opts_chunk$set(warning = FALSE,
                       message = FALSE)
 ```
