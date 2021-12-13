@@ -1,1 +1,19 @@
 # Data transformation
+
+## Getting readable data
+
+To generate readable data from the demo files, we used a python library to parse them in JSON files, resulting in 625 successful conversions and 20GB of pre-processed data. 
+
+The pre-processed data is still very much dirty as some files are corrupted, and in-game technical pauses, warmup rounds, game restarts, etc,  can mess up the format and add rounds. We still managed to clean the data with the python library cleaning functions.
+
+The following Python notebook explains the data structure of a generated JSON file: https://github.com/anhvung/EDAV_Project_Report/blob/main/Python%20notebooks/Understanding%20the%20data.ipynb
+
+To narrow down the amount of data points, we chose to merge all the matches json files into 5 json files containing only information that we judge relevant for analysis : kills data, damages data, flashed data,and grenades data.
+
+## Kills data
+
+## Damages data
+
+## Flashes data
+
+## grenades data

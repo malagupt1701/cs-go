@@ -74,12 +74,23 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
-<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
+<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#what-match-to-analyse"><i class="fa fa-check"></i><b>2.1</b> What match to analyse?</a></li>
+<li class="chapter" data-level="2.2" data-path="data-sources.html"><a href="data-sources.html#getting-the-demo-files"><i class="fa fa-check"></i><b>2.2</b> Getting the demo files</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="data-transformation.html"><a href="data-transformation.html#getting-readable-data"><i class="fa fa-check"></i><b>3.1</b> Getting readable data</a></li>
+<li class="chapter" data-level="3.2" data-path="data-transformation.html"><a href="data-transformation.html#kills-data"><i class="fa fa-check"></i><b>3.2</b> Kills data</a></li>
+<li class="chapter" data-level="3.3" data-path="data-transformation.html"><a href="data-transformation.html#damages-data"><i class="fa fa-check"></i><b>3.3</b> Damages data</a></li>
+<li class="chapter" data-level="3.4" data-path="data-transformation.html"><a href="data-transformation.html#flashes-data"><i class="fa fa-check"></i><b>3.4</b> Flashes data</a></li>
+<li class="chapter" data-level="3.5" data-path="data-transformation.html"><a href="data-transformation.html#grenades-data"><i class="fa fa-check"></i><b>3.5</b> grenades data</a></li>
+</ul></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#kills-data"><i class="fa fa-check"></i><b>4.1</b> Kills data</a></li>
-<li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#damages-data"><i class="fa fa-check"></i><b>4.2</b> Damages data</a></li>
+<li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#kills-data-1"><i class="fa fa-check"></i><b>4.1</b> Kills data</a></li>
+<li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#damages-data-1"><i class="fa fa-check"></i><b>4.2</b> Damages data</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
@@ -115,8 +126,21 @@
 <script src="./D3/event_teamsJSON.js"></script>
 
 <style type="text/css">
-    
-    .row {
+        .btn {
+      background-color: white; 
+      color: black; 
+      border: 2px solid #008CBA;
+      border-radius: 5px;
+      padding: 5px 8px;
+       box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    }
+
+    .btn:hover {
+      background-color: #008CBA;
+      box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+      color: white;
+    }
+        .row {
         width: 100%;
         display: flex;
         flex-direction: row;
@@ -284,7 +308,7 @@
 
     <div class="block">
         <p>Change team side data</p>
-        <button type="button" id="side_button" class='side text' onclick="change_side(this)">Showing CT side</button>
+        <button type="button" id="side_button" class='side text btn' onclick="change_side(this)">Showing CT side</button>
         
     </div>
     <div class="block">

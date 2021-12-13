@@ -74,12 +74,23 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
-<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
+<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#what-match-to-analyse"><i class="fa fa-check"></i><b>2.1</b> What match to analyse?</a></li>
+<li class="chapter" data-level="2.2" data-path="data-sources.html"><a href="data-sources.html#getting-the-demo-files"><i class="fa fa-check"></i><b>2.2</b> Getting the demo files</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="data-transformation.html"><a href="data-transformation.html#getting-readable-data"><i class="fa fa-check"></i><b>3.1</b> Getting readable data</a></li>
+<li class="chapter" data-level="3.2" data-path="data-transformation.html"><a href="data-transformation.html#kills-data"><i class="fa fa-check"></i><b>3.2</b> Kills data</a></li>
+<li class="chapter" data-level="3.3" data-path="data-transformation.html"><a href="data-transformation.html#damages-data"><i class="fa fa-check"></i><b>3.3</b> Damages data</a></li>
+<li class="chapter" data-level="3.4" data-path="data-transformation.html"><a href="data-transformation.html#flashes-data"><i class="fa fa-check"></i><b>3.4</b> Flashes data</a></li>
+<li class="chapter" data-level="3.5" data-path="data-transformation.html"><a href="data-transformation.html#grenades-data"><i class="fa fa-check"></i><b>3.5</b> grenades data</a></li>
+</ul></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#kills-data"><i class="fa fa-check"></i><b>4.1</b> Kills data</a></li>
-<li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#damages-data"><i class="fa fa-check"></i><b>4.2</b> Damages data</a></li>
+<li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#kills-data-1"><i class="fa fa-check"></i><b>4.1</b> Kills data</a></li>
+<li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#damages-data-1"><i class="fa fa-check"></i><b>4.2</b> Damages data</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
@@ -105,7 +116,26 @@
             <section class="normal" id="section-">
 <div id="data-transformation" class="section level1" number="3">
 <h1><span class="header-section-number">Chapter 3</span> Data transformation</h1>
+<div id="getting-readable-data" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Getting readable data</h2>
+<p>To generate readable data from the demo files, we used a python library to parse them in JSON files, resulting in 625 successful conversions and 20GB of pre-processed data.</p>
+<p>The pre-processed data is still very much dirty as some files are corrupted, and in-game technical pauses, warmup rounds, game restarts, etc, can mess up the format and add rounds. We still managed to clean the data with the python library cleaning functions.</p>
+<p>The following Python notebook explains the data structure of a generated JSON file: <a href="https://github.com/anhvung/EDAV_Project_Report/blob/main/Python%20notebooks/Understanding%20the%20data.ipynb" class="uri">https://github.com/anhvung/EDAV_Project_Report/blob/main/Python%20notebooks/Understanding%20the%20data.ipynb</a></p>
+<p>To narrow down the amount of data points, we chose to merge all the matches json files into 5 json files containing only information that we judge relevant for analysis : kills data, damages data, flashed data,and grenades data.</p>
+</div>
+<div id="kills-data" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Kills data</h2>
+</div>
+<div id="damages-data" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Damages data</h2>
+</div>
+<div id="flashes-data" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> Flashes data</h2>
+</div>
+<div id="grenades-data" class="section level2" number="3.5">
+<h2><span class="header-section-number">3.5</span> grenades data</h2>
 
+</div>
 </div>
             </section>
 

@@ -1,9 +1,16 @@
 introduction
 data-sources
+what-match-to-analyse
+getting-the-demo-files
 data-transformation
-missing-values
+getting-readable-data
 kills-data
 damages-data
+flashes-data
+grenades-data
+missing-values
+kills-data-1
+damages-data-1
 results
 interactive-component
 conclusion

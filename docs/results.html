@@ -74,12 +74,23 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
-<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
+<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#what-match-to-analyse"><i class="fa fa-check"></i><b>2.1</b> What match to analyse?</a></li>
+<li class="chapter" data-level="2.2" data-path="data-sources.html"><a href="data-sources.html#getting-the-demo-files"><i class="fa fa-check"></i><b>2.2</b> Getting the demo files</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="data-transformation.html"><a href="data-transformation.html#getting-readable-data"><i class="fa fa-check"></i><b>3.1</b> Getting readable data</a></li>
+<li class="chapter" data-level="3.2" data-path="data-transformation.html"><a href="data-transformation.html#kills-data"><i class="fa fa-check"></i><b>3.2</b> Kills data</a></li>
+<li class="chapter" data-level="3.3" data-path="data-transformation.html"><a href="data-transformation.html#damages-data"><i class="fa fa-check"></i><b>3.3</b> Damages data</a></li>
+<li class="chapter" data-level="3.4" data-path="data-transformation.html"><a href="data-transformation.html#flashes-data"><i class="fa fa-check"></i><b>3.4</b> Flashes data</a></li>
+<li class="chapter" data-level="3.5" data-path="data-transformation.html"><a href="data-transformation.html#grenades-data"><i class="fa fa-check"></i><b>3.5</b> grenades data</a></li>
+</ul></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#kills-data"><i class="fa fa-check"></i><b>4.1</b> Kills data</a></li>
-<li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#damages-data"><i class="fa fa-check"></i><b>4.2</b> Damages data</a></li>
+<li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#kills-data-1"><i class="fa fa-check"></i><b>4.1</b> Kills data</a></li>
+<li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#damages-data-1"><i class="fa fa-check"></i><b>4.2</b> Damages data</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
@@ -105,6 +116,50 @@
             <section class="normal" id="section-">
 <div id="results" class="section level1" number="5">
 <h1><span class="header-section-number">Chapter 5</span> Results</h1>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre><code>## 
+## Call:
+## lm(formula = relative_score_diff ~ kpr + adr + first_kill_percent + 
+##     grenades_per_round + attack_grenades_round + smokes_per_round + 
+##     assist_percent + non_traded_percent + avg_flash_duration, 
+##     data = team_killsstat)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.2786 -0.1369 -0.0153  0.1025 12.7381 
+## 
+## Coefficients: (1 not defined because of singularities)
+##                        Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)           -2.159002   0.310137  -6.961 6.26e-12 ***
+## kpr                    1.098123   0.128731   8.530  &lt; 2e-16 ***
+## adr                   -0.008681   0.001503  -5.776 1.04e-08 ***
+## first_kill_percent     0.556315   0.177298   3.138  0.00175 ** 
+## grenades_per_round     0.129022   0.046214   2.792  0.00535 ** 
+## attack_grenades_round -0.097034   0.058489  -1.659  0.09744 .  
+## smokes_per_round             NA         NA      NA       NA    
+## assist_percent        -0.013587   0.092676  -0.147  0.88347    
+## non_traded_percent     0.908901   0.336880   2.698  0.00710 ** 
+## avg_flash_duration     0.012487   0.005443   2.294  0.02199 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.4564 on 954 degrees of freedom
+## Multiple R-squared:  0.4303, Adjusted R-squared:  0.4255 
+## F-statistic: 90.06 on 8 and 954 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Top teams for each event</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-17-1.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-17-2.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-20-1.png" width="672" />
+<img src="finalproj_files/figure-html/unnamed-chunk-21-1.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-21-2.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-21-3.png" width="672" />
+<img src="finalproj_files/figure-html/unnamed-chunk-22-1.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-22-2.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-23-1.png" width="672" />
+<img src="finalproj_files/figure-html/unnamed-chunk-24-1.png" width="1440" />
+<img src="finalproj_files/figure-html/unnamed-chunk-25-1.png" width="768" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-26-1.png" width="1248" /></p>
+<p>PCA</p>
+<p>We now color points so that teams that have won appear in a certain color, and teams that didn’t appear in another color. We also make arrow stand out a bit more, and add the correlation circle.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 
 </div>
             </section>

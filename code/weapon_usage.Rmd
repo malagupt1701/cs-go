@@ -56,7 +56,7 @@ year2005G <- ggplot(year2005, aes(x = reorder(weapon,-Count) , y = Count)) +
 ```{r fig.height=10,fig.width=8}
 level_order <- c('DreamHack Winter 2013','EMS One Katowice 2014','ESL One Cologne 2014','DreamHack Winter 2014','ESL One Katowice 2015','ESL One Cologne 2015','DreamHack Open Cluj-Napoca 2015','MLG Columbus 2016','ESL One Cologne 2016','ELEAGUE Major 2017','PGL Major Krakow 2017','ELEAGUE Major 2018','FACEIT Major 2018','IEM Katowice 2019','StarLadder Major Berlin 2019')
 
-damages_json
+
 weapon_usage <- damages %>% group_by(match_id,attackerSteamID,weapon,round_num) %>% summarize(weapon=last(weapon),date=last(match_date),event=last(match_event),side=last(attackerSide),name=last(attackerName))
 
 weapon_usage
