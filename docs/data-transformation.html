@@ -53,6 +53,10 @@
 
 <link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="libs/parallel-coordinates-2.1.8/parcoords.css" rel="stylesheet" />
+<script src="libs/parcoords-binding-1.0.0/parcoords.js"></script>
+<script src="libs/d3-5.16.0/d3.min.js"></script>
 
 
 
@@ -136,10 +140,10 @@
 <h2><span class="header-section-number">3.1</span> Getting readable data</h2>
 <p>We used Selenium and Beautiful Soup to parse the <a href="http://hltv.org">HLTV</a> website and to download the demo files. To avoid putting too much load on the site, we downloaded the demo files over the course of a full week. This resulted in over 600 demo files.</p>
 <p>To generate readable data from the demo files, we used a python <a href="https://github.com/pnxenopoulos/csgo">library</a> [1] to parse them in JSON files, resulting in 625 successful conversions and 20GB of pre-processed data from the original 80+GB of data. <a href="https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/code/Pre-processing.ipynb">Python notebook - pre-processing</a>. This process concerts the demo files into json files.</p>
-<p>The pre-processed data is still very much dirty as some files were corrupted. Also in-game technical pauses, warmup rounds, game restarts, etc, can mess up the format and add rounds. We still managed to clean the data with the csgo python library cleaning functions.</p>
+<p>The pre-processed data is still very much dirty as some files were corrupted. Also, in-game technical pauses, warmup rounds, game restarts, etc, can mess up the format and add rounds. We still managed to clean the data with the csgo python library cleaning functions.</p>
 <p>The following Python notebook explains the data structure of a generated JSON file: <a href="https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/code/Understanding%20the%20data.ipynb">Python notebook - data structures</a></p>
-<p>To narrow down the amount of data points, we chose to merge all the matches json files into 5 json files containing information that we judged relevant for analysis : kills data, damages data, flashed data,and grenades data. To do so, we had to iterate through all the json files and all the relevant keys that we wanted to analyse.</p>
-<p>To combine the json files and join the matches information such as score, winner and teams, we used the parsed html from <a href="http://hltv.org">HLTV</a> to cross the information. <a href="https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/code/Combining%20data.ipynb">Python notebook - combining json files</a>. The last step allows to have consistent data across all matches and events that can later be joined, or grouped together in R.</p>
+<p>To narrow down the amount of data points, we chose to merge all the matches json files into 5 json files containing information that we judged relevant for analysis : kills data, damages data, flashed data,and grenades data. To do so, we had to iterate through all the json files and all the relevant keys that we wanted to analyze.</p>
+<p>To combine the json files and join the matches information such as score, winner, and teams, we used the parsed html from <a href="http://hltv.org">HLTV</a> to cross the information. <a href="https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/code/Combining%20data.ipynb">Python notebook - combining json files</a>. The last step allows having consistent data across all matches and events that can later be joined, or grouped together in R.</p>
 <p><a href="https://drive.google.com/drive/folders/1R86RveRkboHe123dH0ieMpk8U_hgZ6qH?usp=sharing">Lion drive link to the combined json files and parsed html</a> (1.5GB)</p>
 </div>
 <div id="kills-data" class="section level2" number="3.2">

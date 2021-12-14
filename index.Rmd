@@ -19,7 +19,7 @@ These two teams play as both the Terrorist (T) and Counter- Terrorist (CT) sides
 A professional match consists of a collection of performances on one or more maps, where maps are standardized and selected
 from a known pool of seven maps. Players must purchase armor, weapons, defuse or rescue kits, and manage their in-game economy to maximize their chance of success.
 
-The overall aim of the game being to eliminate the other team whilst successfully completing side objectives.
+The overall aim of the game is to eliminate the other team whilst successfully completing side objectives.
 Terrorist Objectives: plant bombs, take hostages, and assassinate opponents.
 Counter-Terrorists Objectives: defuse bombs, rescue hostages, and assassinate opponents.
 

@@ -28,9 +28,9 @@ wins <- wins %>%  mutate(final_score_winner=if_else(round_tot<31,16, 19+3*(  (ro
 
 ## Evaluate the performance of teams and players with a new rating
 
-We are going to see how commonly used indicators impacts the final score.
+We are going to see how commonly used indicators impact the final score.
 
-We generated standard indicators used by event organisors and sites from the datasets:
+We generated standard indicators used by event organisers  and sites from the datasets:
 
 - kpr : average number of kills per round
 
@@ -48,9 +48,9 @@ We generated standard indicators used by event organisors and sites from the dat
 
 - blinded_ratio: ratio of kills where the victim was blinded by a flash grenade
 
-- strafing: ratio of kills where the attacker was strafing i.e. was side stepping to avoid being immobile to the opposing player
+- strafing: ratio of kills where the attacker was strafing i.e. was sidestepping to avoid being immobile to the opposing player
 
-- hs_ratio: ratio of kills where the attackerclanded a shot in the enemy's head, resulting in more damage points
+- hs_ratio: ratio of kills where the attacker landed a shot in the enemy's head, resulting in more damage points
 
 ```{r fig.width=8}
 
@@ -111,12 +111,11 @@ df.mlt %>% ggplot(aes(x=yvalue, y=relative_score_diff))+
 ```
 
 We can see that some indicators are more correlated than others to the relative score difference (difference of the winner's and loser's scores over the sum of the scores). 
-For instance the kpr indicator has a correlation score of 0.6 with the relative score difference and thus can be used to evaluate a player's performance. 
-On the contrary, the strafing and hs_ratio indicators have little to do with a team's success. Overall we can see that kpr (ie:average number of kills per round),
-adr (ie: average damage per round) and first_kill_ratio are three indicator variables which has a strong positive correlation with relative score difference
+For instance, the kpr indicator has a correlation score of 0.6 with the relative score difference and thus can be used to evaluate a player's performance. 
+On the contrary, the strafing and hs_ratio indicators have little to do with a team's success. Overall we can see that kpr (ie:average number of kills per round), adr (ie: average damage per round) and first_kill_ratio are three indicator variables that have a stronger positive correlation with the relative score difference
 
 
-A PCA analysis better helps visualize indicators that better reflects a team's chance of winning.
+A PCA analysis better helps visualize indicators that better reflect a team's chance of winning.
 
 ```{r }
 #uncomment to install ggbiplot for PCA
@@ -147,7 +146,7 @@ ggbiplot(team_killsstat.pca , obs.scale = 1, var.scale =1,circle=TRUE, group=tea
 
 ```
 
-Indicators with directions opposite to the loosing matches and closer to the correlation circle are the most interesting ones. As we can see, the PCA analysis confirms the findings with the correlation tests.
+Indicators with directions opposite to the losing matches and closer to the correlation circle are the most interesting ones. As we can see, the PCA analysis confirms the findings with the correlation tests.
 
 
 
@@ -206,11 +205,11 @@ ggtitle("Team ratings at each event")  +
 geom_bar(stat="identity")+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
-As expected the winner team is consistently in the top team ratings. 6 times out of 10, the winner team has the best rating between 70 and 100. However sometimes, some teams get even better ratings than the winner. This is explained by the fact that some teams have a solid performance throughout the tournament, only to get eliminated in the final stage. For example, in the Eleague Major 2017 event, Virtus.Pro was eliminated by Astralis in the finals, and Faze Clan got eliminated in the quarter-finals. [1]
+As expected the winning team is consistently in the top team ratings. 6 times out of 10, the winning team has the best rating between 70 and 100. However, sometimes, some teams get even better ratings than the winner. This is explained by the fact that some teams have a solid performance throughout the tournament, only to get eliminated in the final stage. For example, in the Eleague Major 2017 event, Virtus.Pro was eliminated by Astralis in the finals, and Faze Clan got eliminated in the quarter-finals. [1]
 
 ## Players performance
 
-Events and websites like HLTV generally focus on players's performance on individual events. However it would be interesting to look at a player's performance across all event. This would smooth out players that had unexpectedly good or bad performance in an event. 
+Events and websites like HLTV generally focus on player's performance at individual events. However, it would be interesting to look at a player's performance across all events. This would smooth out players that had an unexpectedly good or bad performance in an event. 
 
 ```{r playerrating}
 #all time player stats
@@ -252,12 +251,14 @@ A <- playerstat  %>%  filter(match_played>10)  %>%  top_n(-30,rating) %>% arrang
 library(patchwork)
 A+B
 ```
+The rating is derived from the combined effort of the player considering various parameters like average kills per round, damages through grenade, headshot, ratio of first kills, duration of flashes etc.
 
-The player Autimatic has the highest rating of all, and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2018 and 2019 by the [HLTV](https://hltv.org) website means that our combined rating reflects the different ratings of other sites such as HLTV. Note that the player Zywoo started his career during 2018 thus is not this the top player raking of this year. [2], [3], [4]
+The player Autimatic has the highest rating of all and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple, and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2018 and 2019 by the [HLTV](https://hltv.org) website means that our combined rating reflects the different ratings of other sites such as HLTV. Note that the player Zywoo started his career in 2018 thus is not in the top player ranking of this year. [2], [3], [4]
 
-There is almost 20 points of rating score  difference between the top rated player and the 30th best rated player. The same can the said for the worst rated player. As a result, it is quite easy to differentiate players as the ratings are not too close to each other.
+There is almost 20 points of rating score difference between the top-rated player and the 30th best-rated player. The same can the said for the worst-rated players. As a result, it is quite easy to differentiate players as the ratings are not too close to each other.
 
-The rating is derived from the combined effort of the player considering various parameteres like avergae kills per round, damages through grenade, head shot etc, number of first kill shot , health of the player, number of flashes etc.It is often hard to compare teams and players across events because players often change teams.
+
+It is often hard to compare teams and players across events because players often change teams.
 One way to cross the information is to visualize the teams of a player:
 
 ```{r interactalluv}
@@ -286,7 +287,8 @@ players %>%
        withD3=T,brushMode="1D-axes",reorderable = T,queue=T,alpha=0.5)
 ```
 
-This shows us, how players changed teams over the course of various events and how few players remained in the same team for multiple events.
+This shows how players changed teams throughout various events and how few players remained in the same team for multiple events.
+
 For instance, players Flamie and Edward remained in the team Natus Vincere for multiple events.
 
 
@@ -336,7 +338,7 @@ However, watching games takes time and some parts of this process can be automat
 
 Even though it does not give information such as a team's reactions to specific events, 2d-density maps can give the general trends, and habits of a team or player.
 
-For instance, one of the hardest player to play against is s1mple, especially with the AWP weapon because of its range. Parsing the game data allows to know where players can expect s1mple to be and where he can be aiming at with his weapon.  
+For instance, one of the hardest players to play against is s1mple, especially with the AWP weapon because of its range. Parsing the game data allows to know where players can expect s1mple to be and where he can be aiming at with his weapon.  
 
 ```{r densitymap , fig.height=8, fig.height=10}
 #heatmpas
@@ -397,7 +399,7 @@ stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=294.1
 a+b
 ```
 
-Knowing the habits of a player and the positions where it is dangerous to be can avoid being surprised by the enemy and helps to come up with strategies to counter the enemy team. We can see in yellow where s1mple tends to be when he deals damage, and where the victim's positions are. The trajectories allow to link those two positions. We can see that s1mple often takes tight lines where the trajectory is tengeant to a corner of a wall.
+Knowing the habits of a player and the positions where it is dangerous to be can avoid being surprised by the enemy and helps to come up with strategies to counter the enemy team. We can see in yellow where s1mple tends to be when he deals damage, and where the victim's positions are. The trajectories allow linking those two positions. We can see that s1mple often takes tight lines where the trajectory is tangeant to a corner of a wall.
 
 ## Game evolution and balance
 
@@ -427,7 +429,7 @@ labs(color='Side')
 
 ```
 
-The drop in the win percentage differences after 2016 can be attributed to the update of the nuke, inferno and overpass maps.
+The drop in the win percentage differences after 2016 can be attributed to the update of the nuke, inferno, and overpass maps.
 Maps updates often include changes in the layout to give more advantage to a given side.
 
 ```{r mapwinrates,  fig.height=8,fig.width=8}
@@ -444,16 +446,16 @@ labs(color='Side')
 
 ```
 
-In CS:GO, teams can play on a range of different map layouts in casual play and in professional tournaments. 
-Anecdotally, players usually have a favourite map or one they think they preform poorly on. 
-Professional teams often spend hours training on these maps, so it is interesting to see if winrate across different maps.
+In CS:GO tournaments, teams can play on a range of different map layouts. 
+Anecdotal, players usually have a favorite map or one they think they perform poorly on. 
+Professional teams often spend hours training on these maps, so it is interesting to see if win-rate across different maps.
 
 
-Nuke as been removed from the official maps after Katowice 2015 and reintroduced for Cologne 2016. [5] It was known to greatly favor the CT side, often forcing the team starting on the T side to have an impressive comeback after switching sides on the half time.
+Nuke has been removed from the official maps after Katowice 2015 and reintroduced for Cologne 2016. [5] It was known to greatly favor the CT side, often forcing the team starting on the T side to have an impressive comeback after switching sides on the halftime.
 Of all maps, nuke had the worst balance especially during Dreamhack Winter 2014 with a *CT* win rate of 80%.
 
 
-But after the nuke map update the balance greatly improved and the *CT* and *T* win rates were contained between 40% and 60%. In fact, in 2019 all maps where balanced with win rates between 40% and 60%, with de_inferno, de_dust2, de_nuke, and de_mirage being particularly balanced (win rates close to 50%). Overall, the Starladder Berlin Major 2019 event seems the most balanced Major ever. It is safe to say that game updates generally improved the balance of the game.
+But after the nuke map update, the balance greatly improved and the *CT* and *T* win rates were contained between 40% and 60%. In fact, in 2019 all maps were balanced with win rates between 40% and 60%, with de_inferno, de_dust2, de_nuke, and de_mirage being particularly balanced (win rates close to 50%). Overall, the Starladder Berlin Major 2019 event seems the most balanced Major ever. It is safe to say that game updates generally improved the balance of the game.
  
 Note that the map pool changes for every event. The latest map being introduced is vertigo. Because it is a new map, it is not as balanced as the other ones. 
 
@@ -501,11 +503,11 @@ geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, vjust =
 
 ```
 
-When the developers change a weapon's characteristic such as damage output, it can lead to a drop or spike in popularity.
+When the developers change a weapon's characteristics  such as damage output, it can lead to a drop or spike in popularity.
 
-For example, in 2017 developers tried to increase the usage of smg type weapons by increasing their damage output, especially for the ump. As a result, the ump was often used by teams when they could not get a rifle. But complains from pro players meant that the update was reverted. [6]
+For example, in 2017 developers tried to increase the usage of smg type weapons by increasing their damage output, especially for the ump. As a result, the ump was often used by teams when they could not get a rifle. But complaints from pro players meant that the update was reverted. [6]
 
-The same can be said for the cz-75 in 2018. Also, the p250, five-seven and tec-9 had their damage and accuracy decreased over the years and resulted in a drop in usages by the pro players.
+The same can be said for the cz-75 in 2018. Also, the p250, five-seven, and tec-9 had their damage and accuracy decreased over the years and resulted in a drop in usages by the pro players.
 
 Finally, it happens that players discover that a weapon can be very effective, even without its characteristics being changed. This is what happened in 2019 when players started to use the AUG and the SG 553 weapons for their good accuracy at long range. As a result, their effectiveness has been reduced in a later update. [7]
 
