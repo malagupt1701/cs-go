@@ -253,7 +253,7 @@ library(patchwork)
 A+B
 ```
 
-The player Autimatic has the highest rating of all, and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2018 and 2019 by the [HLTV](https://hltv.org) website means that our combined rating reflects the different ratings of other sites such as HLTV. Note that the player Zywoo started his career during 2018 thus is not this the top player raking of this year. [2], [3],[4]
+The player Autimatic has the highest rating of all, and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2018 and 2019 by the [HLTV](https://hltv.org) website means that our combined rating reflects the different ratings of other sites such as HLTV. Note that the player Zywoo started his career during 2018 thus is not this the top player raking of this year. [2], [3], [4]
 
 There is almost 20 points of rating score  difference between the top rated player and the 30th best rated player. The same can the said for the worst rated player. As a result, it is quite easy to differentiate players as the ratings are not too close to each other.
 
@@ -359,7 +359,7 @@ stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=294.1
   geom_segment(aes(xend=victimX, yend=victimY),alpha=0.2)+
   xlim(-3050, 1700)+
   ylim(-3200,1520) + theme(aspect.ratio=1) +
-  labs(title = "Positions of s1mple with the AWP weapon \non the map de_mirage, with bullet trajectories\nCT positions")+
+  labs(title = "Positions of s1mple with the AWP weapon \non the map de_mirage, with \nbullet trajectories\nCT positions")+
   theme(axis.line=element_blank(),
       axis.text.x=element_blank(),
       axis.text.y=element_blank(),
@@ -380,7 +380,7 @@ stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=294.1
   geom_segment(aes(xend=attackerX, yend=attackerY),alpha=0.2)+
   xlim(-3050, 1700)+
   ylim(-3200,1520) + theme(aspect.ratio=1) +
-  labs(title = "Positions of the victims of s1mple hit by the AWP weapon \non the map de_mirage, with bullet trajectories\nCT positions")+
+  labs(title = "Positions of the victims hit by \ns1mple with AWP weapon \non the map de_mirage \nCT positions")+
   theme(axis.line=element_blank(),
       axis.text.x=element_blank(),
       axis.text.y=element_blank(),
@@ -449,7 +449,7 @@ Anecdotally, players usually have a favourite map or one they think they preform
 Professional teams often spend hours training on these maps, so it is interesting to see if winrate across different maps.
 
 
-Nuke as been removed from the official maps after Katowice 2015 and reintroduced for Cologne 2016.[5] It was known to greatly favor the CT side, often forcing the team starting on the T side to have an impressive comeback after switching sides on the half time.
+Nuke as been removed from the official maps after Katowice 2015 and reintroduced for Cologne 2016. [5] It was known to greatly favor the CT side, often forcing the team starting on the T side to have an impressive comeback after switching sides on the half time.
 Of all maps, nuke had the worst balance especially during Dreamhack Winter 2014 with a *CT* win rate of 80%.
 
 
