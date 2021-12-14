@@ -201,7 +201,7 @@ ggtitle("Team ratings at each event")  +
 geom_bar(stat="identity")+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
-As expected the winner team is consistently in the top team ratings. 6 times out of 10, the winner team has the best rating between 70 and 100. However sometimes, some teams get even better ratings than the winner. This is explained by the fact that some teams have a solid performance throughout the tournament, only to get eliminated in the final stage. For example, in the Eleague Major 2017 event, Virtus.Pro was eliminated by Astralis in the finals, and Faze Clan got eliminated in the quarter-finals. [1](https://www.hltv.org/events/2471/eleague-major-2017)
+As expected the winner team is consistently in the top team ratings. 6 times out of 10, the winner team has the best rating between 70 and 100. However sometimes, some teams get even better ratings than the winner. This is explained by the fact that some teams have a solid performance throughout the tournament, only to get eliminated in the final stage. For example, in the Eleague Major 2017 event, Virtus.Pro was eliminated by Astralis in the finals, and Faze Clan got eliminated in the quarter-finals. [1]
 
 ## Players performance
 
@@ -247,7 +247,7 @@ A <- playerstat  %>%  filter(match_played>10)  %>%  top_n(-30,rating) %>% arrang
 library(patchwork)
 A+B
 ```
-The player Autimatic has the highest rating of all, and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2018 and 2019 by the [HLTV](https://hltv.org) website means that our combined rating reflects the different ratings of other sites such as HLTV. Note that the player Zywoo started his career during 2018 thus is not this the top player raking of this year. [2](https://www.hltv.org/news/25028/official-vitality-unveil-team) [3](https://www.hltv.org/news/28749/top-20-players-of-2019-introduction),[4](https://www.hltv.org/news/25735/top-20-players-of-2018-introduction)
+The player Autimatic has the highest rating of all, and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2018 and 2019 by the [HLTV](https://hltv.org) website means that our combined rating reflects the different ratings of other sites such as HLTV. Note that the player Zywoo started his career during 2018 thus is not this the top player raking of this year. [2], [3],[4]
 
 There is almost 20 points of rating score  difference between the top rated player and the 30th best rated player. The same can the said for the worst rated player. As a result, it is quite easy to differentiate players as the ratings are not too close to each other.
 
@@ -431,7 +431,7 @@ labs(title = "Winrates for each map", x = "Events",  y = "Winrate (percentage)")
 labs(color='Side') 
 
 ```
-Nuke as been removed from the official maps after Katowice 2015 and reintroduced for Cologne 2016.[5](https://www.hltv.org/news/17622/new-update-adds-nuke-to-active-duty) It was known to greatly favor the CT side, often forcing the team starting on the T side to have an impressive comeback after switching sides on the half time.
+Nuke as been removed from the official maps after Katowice 2015 and reintroduced for Cologne 2016.[5] It was known to greatly favor the CT side, often forcing the team starting on the T side to have an impressive comeback after switching sides on the half time.
 Of all maps, nuke had the worst balance especially during Dreamhack Winter 2014 with a *CT* win rate of 80%.
 
 But after the nuke map update the balance greatly improved and the *CT* and *T* win rates were contained between 40% and 60%. In fact, in 2019 all maps where balanced with win rates between 40% and 60%, with de_inferno, de_dust2, de_nuke, and de_mirage being particularly balanced (win rates close to 50%). Overall, the Starladder Berlin Major 2019 event seems the most balanced Major ever. It is safe to say that game updates generally improved the balance of the game.
@@ -484,11 +484,11 @@ geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, vjust =
 
 When the developers change a weapon's characteristic such as damage output, it can lead to a drop or spike in popularity.
 
-For example, in 2017 developers tried to increase the usage of smg type weapons by increasing their damage output, especially for the ump. As a result, the ump was often used by teams when they could not get a rifle. But complains from pro players meant that the update was reverted. [6](https://www.hltv.org/news/20546/new-update-changes-the-ump45)
+For example, in 2017 developers tried to increase the usage of smg type weapons by increasing their damage output, especially for the ump. As a result, the ump was often used by teams when they could not get a rifle. But complains from pro players meant that the update was reverted. [6]
 
 The same can be said for the cz-75 in 2018. Also, the p250, five-seven and tec-9 had their damage and accuracy decreased over the years and resulted in a drop in usages by the pro players.
 
-Finally, it happens that players discover that a weapon can be very effective, even without its characteristics being changed. This is what happened in 2019 when players started to use the AUG and the SG 553 weapons for their good accuracy at long range. As a result, their effectiveness has been reduced in a later update [7](https://blog.counter-strike.net/index.php/2020/04/29649/).
+Finally, it happens that players discover that a weapon can be very effective, even without its characteristics being changed. This is what happened in 2019 when players started to use the AUG and the SG 553 weapons for their good accuracy at long range. As a result, their effectiveness has been reduced in a later update. [7]
 
 
 [1] Eleague Major 2017, Overview page, [HLTV.ORG](https://www.hltv.org/events/2471/eleague-major-2017)

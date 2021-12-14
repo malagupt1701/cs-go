@@ -52,7 +52,7 @@ colnames(damages)
 
 ## Flashes data
 
-The flashes data stored in the *ALL_flashes.json file* contains information on every flash grenade thrown. It has 232,181 rows and 36 columns. It has 298,613 rows and 30 columns.
+The flashes data stored in the *ALL_flashes.json file* contains information on every flash grenade thrown. It has 232,181 rows and 36 columns. It has 232,181 rows and 36 columns.
 
 ```{r}
 colnames(flashes)
