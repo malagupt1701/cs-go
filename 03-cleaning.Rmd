@@ -36,9 +36,11 @@ The flashes data stored in the *ALL_flashes.json file* contains information on e
 
 The grenades data stored in the *ALL_grenades.json file* contains information on every grenades thrown that is not a flash grenade.
 
-(1) Analyzing Counter-Strike: Global Offensive Data, Peter Xenopoulos, (2021), GitHub repository, https://github.com/pnxenopoulos/csgo
+
 
 ## Common data
 
 All the previous json data have the same information on the matches (match id, event, date) and teams (team1, team2, winner).
 
+
+(1) Analyzing Counter-Strike: Global Offensive Data, Peter Xenopoulos, (2021), GitHub repository, https://github.com/pnxenopoulos/csgo

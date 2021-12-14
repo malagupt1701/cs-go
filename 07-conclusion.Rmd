@@ -7,5 +7,17 @@ We managed to generate a global rating to measure the performance of teams and p
 
 That being said, there is still a lot to analyse with the rest of the data that was unused. For examples we did not cover the economy aspect of the game: different weapon buying decisions from the players can impact the rest of the game. 
 
-Also while we had a look at player's positions in a match, a more precise round by round analysis can get more information on specific team strategies. However this would have necessitated players' position at frequent intervals which would increase the dataset size by a considerable margin.
+Sill, the D3 interactive part (chaptier 6) allowed us to show more than regular static graphs would allow.
 
+Also while we had a look at player's positions in a match, a more precise round by round analysis can get more information on specific team strategies. However this would have necessitated players' position at frequent intervals which would increase the data set size by a considerable margin.
+
+With esport organisations becoming more professional with dedicated game analysts working for the players, there has been a number of tools [1],[2],[3] that have been created to better analyse and visualize game data. 
+
+Overall, exploring in the topic of game data analysis was very interesting and we learned a lot on R graph creations and interactive graphs with D3.
+
+
+[1] [leetify](https://leetify.com/)
+
+[2] [scope.gg](https://scope.gg/)
+
+[3] [noesis.gg](https://www.noesis.gg/)
