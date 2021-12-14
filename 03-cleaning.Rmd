@@ -17,21 +17,46 @@ To combine the json files and join the matches information such as score, winner
 
 [Lion drive link to the combined json files and parsed html](https://drive.google.com/drive/folders/1R86RveRkboHe123dH0ieMpk8U_hgZ6qH?usp=sharing) (1.5GB)
 
+
+```{r}
+#This is how to load json files 
+library(jsonlite)
+library(tidyverse)
+#pca libraries conflict with dplyr
+library(conflicted)
+
+grenades <- jsonlite::fromJSON("data/ALL_grenades.json", simplifyVector = TRUE)
+kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
+damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
+flashes <- jsonlite::fromJSON("data/ALL_flashes.json", simplifyVector = TRUE)
+```
+
 ## Kills data
 
 
-
 The kills data stored in the *ALL_kills.json* file contains information on every kill that happened such as the player positions, weapon used etc. It has 103,261 rows and 59 columns.
+
+```{r}
+colnames(kills)
+```
 
 
 ## Damages data
 
 The damages data stored in the *ALL_damages.json* file contains information on every damage dealt such as the player positions, weapon used, damage dealt etc. It has 337,151 rows and 42 columns.
 
+```{r}
+colnames(damages)
+```
+
 
 ## Flashes data
 
 The flashes data stored in the *ALL_flashes.json file* contains information on every flash grenade thrown. It has 232,181 rows and 36 columns. It has 298,613 rows and 30 columns.
+
+```{r}
+colnames(flashes)
+```
 
 
 ## grenades data
@@ -39,6 +64,9 @@ The flashes data stored in the *ALL_flashes.json file* contains information on e
 The grenades data stored in the *ALL_grenades.json file* contains information on every grenades thrown that is not a flash grenade. It has 298,613 rows and 30 columns.
 
 
+```{r}
+colnames(grenades)
+```
 
 ## Common data
 
