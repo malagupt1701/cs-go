@@ -462,7 +462,7 @@ labs(color='Side')
 ```
 
 In CS:GO tournaments, teams can play on a range of different map layouts. 
-Professional teams often spend hours training on these maps, so it is interesting to see if win-rate across different maps.
+Professional teams often spend hours training on these maps, so it is interesting to see win-rate across different maps.
 
 
 Nuke has been removed from the official maps after Katowice 2015 and reintroduced for Cologne 2016. [5] It was known to greatly favor the CT side, often forcing the team starting on the T side to have an impressive comeback after switching sides on the halftime.

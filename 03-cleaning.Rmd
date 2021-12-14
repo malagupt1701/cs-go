@@ -37,7 +37,7 @@ flashes <- jsonlite::fromJSON("data/ALL_flashes.json", simplifyVector = TRUE)
 
 
 The kills data stored in the *ALL_kills.json* file contains information on every kill that happened such as the player positions, weapon used etc. It has 103,261 rows and 59 columns.
-The various column names in the grenades data set are:
+The various column names in the kills data set are:
 
 ```{r}
 colnames(kills)
