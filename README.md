@@ -8,6 +8,10 @@ Counter-Strike Global Offensive or CSGO is a team-based video game that is among
 
 In the book we explain how we processed our data and gave our findings with graphs and interactive components.
 
+## Data used
+ 
+ We used in game data from all Major matches. Major are Valve sponsored events for CS:GO where only the top teams can participate.
+
 *This repo was initially generated from a bookdown template available here: https://github.com/jtr13/EDAVtemplate.*
 
 
