@@ -5,14 +5,7 @@
 library(jsonlite)
 library(tidyverse)
 #pca libraries conflict with dplyr
-library(conflicted)
-conflict_prefer("n", "dplyr")
-conflict_prefer("mutate", "dplyr")
-conflict_prefer("arrange", "dplyr")
-conflict_prefer("summarise", "dplyr")
-conflict_prefer("summarize", "dplyr")
-conflict_prefer("filter", "dplyr")
-conflict_prefer("rename", "dplyr")
+
 grenades <- jsonlite::fromJSON("data/ALL_grenades.json", simplifyVector = TRUE)
 kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
 damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
@@ -328,9 +321,9 @@ One of the most successful teams is Astralis with 3 Major wins. A core of 3 play
 
 The game data of matches is available to everyone and pro teams always watch their opponent's previous games to come up with strategies.
 
-However, watching games takes time. Some parts of this process can be automated. 
+However, watching games takes time and some parts of this process can be automated. 
 
-Even though it does not give informations such as teams reactions to specific events, 2d-density maps can give the general trends, and habits of a player of a team.
+Even though it does not give information such as a team's reactions to specific events, 2d-density maps can give the general trends, and habits of a team or player.
 
 For instance, one of the hardest player to play against is s1mple, especially with the AWP weapon because of its range. Parsing the game data allows to know where players can expect s1mple to be and where he can be aiming at with his weapon.  
 
@@ -393,13 +386,13 @@ stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=294.1
 a+b
 ```
 
-Knowing the habits of a player and the positions where it is dangerous to be can avoid being surprised by the enemy and helps to come up with strategies to counter the enemy team.
+Knowing the habits of a player and the positions where it is dangerous to be can avoid being surprised by the enemy and helps to come up with strategies to counter the enemy team. We can see in yellow where s1mple tends to be when he deals damage, and where the victim's positions are. The trajectories allow to link those two positions. We can see that s1mple often takes tight lines where the trajectory is tengeant to a corner of a wall.
 
 ## Game evolution and balance
 
 People often attribute the success and longevity of the CSGO game to its balance, meaning that both teams have an equal chance of winning. However, this is difficult to achieve as it depends on multiple factors such as the weapon characteristics and map layout.
 
-Because the developpers have been continuously updating the maps and weapon characterstics, the probablity to win a round on the T/CT sides has changed over the years.
+Because the developers have been continuously updating the maps and weapon characteristics, the probability to win a round on the T/CT sides has changed over the years.
 
 ```{r winrates}
 
@@ -438,9 +431,11 @@ labs(title = "Winrates for each map", x = "Events",  y = "Winrate (percentage)")
 labs(color='Side') 
 
 ```
-Nuke as been removed from the official maps after Katowice 2015 and reintroduced for Cologne 2016. It was known to greatly favor the CT side, often forcing the team starting on the T side to have an impressive comeback after switching sides on the half time.
-But after the nuke map update the balance greatly improved.
+Nuke as been removed from the official maps after Katowice 2015 and reintroduced for Cologne 2016.[5](https://www.hltv.org/news/17622/new-update-adds-nuke-to-active-duty) It was known to greatly favor the CT side, often forcing the team starting on the T side to have an impressive comeback after switching sides on the half time.
+Of all maps, nuke had the worst balance especially during Dreamhack Winter 2014 with a *CT* win rate of 80%.
 
+But after the nuke map update the balance greatly improved and the *CT* and *T* win rates were contained between 40% and 60%. In fact, in 2019 all maps where balanced with win rates between 40% and 60%, with de_inferno, de_dust2, de_nuke, and de_mirage being particularly balanced (win rates close to 50%). Overall, the Starladder Berlin Major 2019 event seems the most balanced Major ever. It is safe to say that game updates generally improved the balance of the game.
+ 
 Note that the map pool changes for every event. The latest map being introduced is vertigo. Because it is a new map, it is not as balanced as the other ones. 
 
 
@@ -489,11 +484,11 @@ geom_line() + geom_point()+ theme(axis.text.x = element_text(angle = 90, vjust =
 
 When the developers change a weapon's characteristic such as damage output, it can lead to a drop or spike in popularity.
 
-For example, in 2017 developers tried to increase the usage of smg type weapons by increasing their damage output. As a result, the ump was often used by teams when they could not get a rifle. But complains from pro players meant that the update was reverted.
+For example, in 2017 developers tried to increase the usage of smg type weapons by increasing their damage output, especially for the ump. As a result, the ump was often used by teams when they could not get a rifle. But complains from pro players meant that the update was reverted. [6](https://www.hltv.org/news/20546/new-update-changes-the-ump45)
 
 The same can be said for the cz-75 in 2018. Also, the p250, five-seven and tec-9 had their damage and accuracy decreased over the years and resulted in a drop in usages by the pro players.
 
-Finally, it happens that players discover that a weapon can be very effective, even without its characteristics being changed. This is what happened in 2019 when players started to use the AUG and the SG 553 weapons for their good accuracy at long range. 
+Finally, it happens that players discover that a weapon can be very effective, even without its characteristics being changed. This is what happened in 2019 when players started to use the AUG and the SG 553 weapons for their good accuracy at long range. As a result, their effectiveness has been reduced in a later update [7](https://blog.counter-strike.net/index.php/2020/04/29649/).
 
 
 [1] Eleague Major 2017, Overview page, [HLTV.ORG](https://www.hltv.org/events/2471/eleague-major-2017)
@@ -503,7 +498,10 @@ Finally, it happens that players discover that a weapon can be very effective, e
 [3] Top 20 players of 2019: INTRODUCTION, Striker, 2019 [HLTV.ORG](https://www.hltv.org/news/28749/top-20-players-of-2019-introduction)
 
 [4] Top 20 players of 2018: INTRODUCTION, Professeur, 2018 [HLTV.ORG](https://www.hltv.org/news/25735/top-20-players-of-2018-introduction)
-[] NEW UPDATE CHANGES THE UMP45, Sander, 2017, [HLTV.ORG](https://www.hltv.org/news/20546/new-update-changes-the-ump45)
 
-[] Release Notes for 4/10/2020, Valve, 2020, [update notes](https://blog.counter-strike.net/index.php/2020/04/29649/)
+[5] NEW UPDATE ADDS NUKE TO ACTIVE DUTY, stich, 2016, [HLTV.ORG](https://www.hltv.org/news/17622/new-update-adds-nuke-to-active-duty)
+
+[6] NEW UPDATE CHANGES THE UMP45, Sander, 2017, [HLTV.ORG](https://www.hltv.org/news/20546/new-update-changes-the-ump45)
+
+[7] Release Notes for 4/10/2020, Valve, 2020, [update notes](https://blog.counter-strike.net/index.php/2020/04/29649/)
 

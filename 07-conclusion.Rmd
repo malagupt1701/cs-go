@@ -7,7 +7,7 @@ We managed to generate a global rating to measure the performance of teams and p
 
 That being said, there is still a lot to analyse with the rest of the data that was unused. For examples we did not cover the economy aspect of the game: different weapon buying decisions from the players can impact the rest of the game. 
 
-Sill, the D3 interactive part (chaptier 6) allowed us to show more than regular static graphs would allow.
+Sill, the D3 interactive part (chapter 6) allowed us to show more than regular static graphs would allow.
 
 Also while we had a look at player's positions in a match, a more precise round by round analysis can get more information on specific team strategies. However this would have necessitated players' position at frequent intervals which would increase the data set size by a considerable margin.
 
