@@ -21,6 +21,6 @@ players-performance
 use-in-game-data-to-have-the-competitive-advantage
 game-evolution-and-balance
 interactive-component
-explaination
+explanation
 interactive-maps
 conclusion
