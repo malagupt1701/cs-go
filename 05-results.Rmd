@@ -147,7 +147,7 @@ ggbiplot(team_killsstat.pca , obs.scale = 1, var.scale =1,circle=TRUE, group=tea
 
 ```
 
-Indicators with directions opposite to the loosing matches and closer to the correlation circle are the most interesting ones. As we can see, the PCA analysis confirms the findings with the correlation tests.
+Indicators with directions opposite to the loosing matches and closer to the correlation circle are the most interesting ones. As we can see, the PCA analysis confirms the findings with the correlation tests. It also tells us that many of these indicators are themselves correlated since the angle between their arrows is very small: the principal components were not able to separate these features in the reduced space. It is not surprising that the number of kills, the number of damages and the number of assists are very correlated. Nonetheless, it is interesting to notice that the number of first kills of a team is also correlated to these metrics; an early numeric advantage in the match thus definitely give an advantage to a team.
 
 
 
