@@ -2,7 +2,7 @@
 
 
 
-## Explaination 
+## Explanation 
 
 The interactive component allows the user to study the positions of a team on a specific map. Positions are split in *CT* and *T* positions as both sides face each other. To generate each map .csv data, we grouped the *damages* data by match id in the  [create_subset.Rmd](https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/code/create_subset.Rmd) file. The .csv files are stored in the docs/D3/csv folders of the GitHub repository and are arranged by events, teams and maps.
 
