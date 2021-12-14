@@ -5,7 +5,15 @@
 library(jsonlite)
 library(tidyverse)
 #pca libraries conflict with dplyr
-
+library(conflicted)
+conflict_prefer("n", "dplyr")
+conflict_prefer("mutate", "dplyr")
+conflict_prefer("arrange", "dplyr")
+conflict_prefer("summarise", "dplyr")
+conflict_prefer("summarize", "dplyr")
+conflict_prefer("filter", "dplyr")
+conflict_prefer("rename", "dplyr")
+data <- readRDS(file = "data/subset_kills.Rda")
 grenades <- jsonlite::fromJSON("data/ALL_grenades.json", simplifyVector = TRUE)
 kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
 damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
@@ -32,25 +40,25 @@ We are going to see how commonly used indicators impact the final score.
 
 We generated standard indicators used by event organisers  and sites from the datasets:
 
-- kpr : average number of kills per round
+- 'kpr' : average number of kills per round
 
-- adr: average damage per round
+- 'adr': average damage per round
 
-- first_kill_ratio: ratio of the time where the team or player gets the first kill (which grants a numerical advantage)
+- 'first_kill_ratio': ratio of the time where the team or player gets the first kill (which grants a numerical advantage)
 
-- smokes_per_round: average number of smokes thrown in a round
+- 'smokes_per_round': average number of smokes thrown in a round
 
-- assist_ratio: ratio of kills assisted by another player than dealt more than 40 points of damage
+- 'assist_ratio': ratio of kills assisted by another player that dealt more than 40 points of damage
 
-- non_traded_ratio: ratio of kills where the victim team could not get a revenge to prevent a numerical advantage
+- 'non_traded_ratio': ratio of kills where the victim team could not get a revenge to prevent a numerical advantage
 
-- avg_flash_duration: average time of blinded enemy players caused by flash grenades
+- 'avg_flash_duration': average time of blinded enemy players caused by flash grenades
 
-- blinded_ratio: ratio of kills where the victim was blinded by a flash grenade
+- 'blinded_ratio': ratio of kills where the victim was blinded by a flash grenade
 
-- strafing: ratio of kills where the attacker was strafing i.e. was sidestepping to avoid being immobile to the opposing player
+- 'strafing': ratio of kills where the attacker was strafing i.e. was sidestepping to avoid being immobile to the opposing player
 
-- hs_ratio: ratio of kills where the attacker landed a shot in the enemy's head, resulting in more damage points
+- 'hs_ratio': ratio of kills where the attacker landed a shot in the enemy's head, resulting in more damage points
 
 ```{r fig.width=8}
 
@@ -112,7 +120,7 @@ df.mlt %>% ggplot(aes(x=yvalue, y=relative_score_diff))+
 
 We can see that some indicators are more correlated than others to the relative score difference (difference of the winner's and loser's scores over the sum of the scores). 
 For instance, the kpr indicator has a correlation score of 0.6 with the relative score difference and thus can be used to evaluate a player's performance. 
-On the contrary, the strafing and hs_ratio indicators have little to do with a team's success. Overall we can see that kpr (ie:average number of kills per round), adr (ie: average damage per round) and first_kill_ratio are three indicator variables that have a stronger positive correlation with the relative score difference
+On the contrary, the strafing and hs_ratio indicators have little to do with a team's success. Overall we can see that 'kpr' (ie:average number of kills per round), 'adr' (ie: average damage per round) and 'first_kill_ratio' are three indicator variables that have a stronger positive correlation with the relative score difference
 
 
 A PCA analysis better helps visualize indicators that better reflect a team's chance of winning.
@@ -179,6 +187,9 @@ With a new combined rating, we can take a closer look at each team's performance
 ```{r  teamrating , fig.height=8,  fig.width=10}
 # TOP TEAMS AT EACH EVENT
 #filtering
+
+team_killsstat %>% dplyr::group_by(team,event)  %>% dplyr::summarize(rating=mean(rating)) 
+
 top_teams <- team_killsstat %>% group_by(team,event) %>% summarize(rating=mean(rating)) %>% filter( !is.nan(rating) ,rating!=0) 
 #list of events
 level_order <- c('DreamHack Winter 2013','EMS One Katowice 2014','ESL One Cologne 2014','DreamHack Winter 2014','ESL One Katowice 2015','ESL One Cologne 2015','DreamHack Open Cluj-Napoca 2015','MLG Columbus 2016','ESL One Cologne 2016','ELEAGUE Major 2017','PGL Major Krakow 2017','ELEAGUE Major 2018','FACEIT Major 2018','IEM Katowice 2019','StarLadder Major Berlin 2019')
@@ -253,9 +264,11 @@ A <- playerstat  %>%  filter(match_played>10)  %>%  top_n(-30,rating) %>% arrang
 library(patchwork)
 A+B
 ```
+
+
 The rating is derived from the combined effort of the player considering various parameters like average kills per round, damages through grenade, headshot, ratio of first kills, duration of flashes etc.
 
-The player Autimatic has the highest rating of all and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple, and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2018 and 2019 by the [HLTV](https://hltv.org) website means that our combined rating reflects the different ratings of other sites such as HLTV. Note that the player Zywoo started his career in 2018 thus is not in the top player ranking of this year. [2], [3], [4]
+The player Autimatic has the highest rating of all and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple, and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2018 and 2019 by the [HLTV](https://hltv.org) website means that our combined rating reflects the different ratings of other sites such as HLTV. Note that the player Zywoo started his career in 2018, and thus is not in the top player ranking of this year. [2], [3], [4]
 
 There is almost 20 points of rating score difference between the top-rated player and the 30th best-rated player. The same can the said for the worst-rated players. As a result, it is quite easy to differentiate players as the ratings are not too close to each other.
 
@@ -401,7 +414,7 @@ stat_density_2d(aes(fill = log10(..level..)), geom = "polygon",alpha=0.6,h=294.1
 a+b
 ```
 
-Knowing the habits of a player and the positions where it is dangerous to be can avoid being surprised by the enemy and helps to come up with strategies to counter the enemy team. We can see in yellow where s1mple tends to be when he deals damage, and where the victim's positions are. The trajectories allow linking those two positions. We can see that s1mple often takes tight lines where the trajectory is tangeant to a corner of a wall.
+Knowing the habits of a player and the positions where it is dangerous to be can avoid being surprised by the enemy and helps to come up with strategies to counter the enemy team. We can see in yellow where s1mple tends to be when he deals damage, and where the victim's positions are. The trajectories allow linking those two positions. We can see that s1mple often takes tight lines where the trajectory is tangent to a corner of a wall.
 
 ## Game evolution and balance
 
@@ -449,7 +462,6 @@ labs(color='Side')
 ```
 
 In CS:GO tournaments, teams can play on a range of different map layouts. 
-Anecdotal, players usually have a favorite map or one they think they perform poorly on. 
 Professional teams often spend hours training on these maps, so it is interesting to see if win-rate across different maps.
 
 

@@ -26,8 +26,14 @@ Counter-Terrorists Objectives: defuse bombs, rescue hostages, and assassinate op
 ##  How can the data bring answers to the following questions?
 
 
-- Data can help understand the performance of players and teams by calculating some metrics. Those metrics can be combined to create a global rating.
+- How can we rate a player’s or team’s performance?
 
-- Game analysts and players traditionally only watch the demo replays to study teams and player behaviors. Data can help automate this process by showing some players’ habits. 
+Data can help understand the performance of players and teams by calculating some metrics. Those metrics can be combined to create a global rating.
 
-- Developers have tried to change weapon behaviors, game economy, maps, and player movements to make the game more balanced.  Despite numerous updates since its release 10 years ago, players constantly give their feedback to make it evolve. Having a look at win rates in different situations throughout the years can help understand the updates, and shed light on potential fixes that can be made.
+- How can in-game-generated data help teams gain a competitive advantage?
+
+Game analysts and players traditionally only watch the demo replays to study teams and player behaviors. Data can help automate this process by showing some players’ habits. 
+
+- Can we say that the game is balanced after more than 10 years of continuous updates?
+
+Developers have tried to change weapon behaviors, game economy, maps, and player movements to make the game more balanced.  Despite numerous updates since its release 10 years ago, players constantly give their feedback to make it evolve. Having a look at win rates in different situations throughout the years can help understand the updates, and shed light on potential fixes that can be made.
