@@ -18,7 +18,7 @@ Also while we had a look at player's positions in a match, a more precise round 
 
 With esport organisations becoming more professional with dedicated game analysts working for the players, there has been a number of tools [1],[2],[3] that have been created to better analyse and visualize game data. 
 
-Overall, exploring in the topic of game data analysis was very interesting and we learned a lot on R graph creations and interactive graphs with D3.
+Overall, exploring in the topic of game data analysis was very interesting and we learned a lot on R graphs creation and interactive graphs with D3.
 
 
 [1] [leetify](https://leetify.com/)
