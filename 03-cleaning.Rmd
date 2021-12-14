@@ -19,22 +19,24 @@ To combine the json files and join the matches information such as score, winner
 
 ## Kills data
 
-The kills data stored in the *ALL_kills.json* file contains information on every kill that happened such as the player positions, weapon used etc.
+
+
+The kills data stored in the *ALL_kills.json* file contains information on every kill that happened such as the player positions, weapon used etc. It has 103,261 rows and 59 columns.
 
 
 ## Damages data
 
-The damages data stored in the *ALL_damages.json* file contains information on every damage dealt such as the player positions, weapon used, damage dealt etc.
+The damages data stored in the *ALL_damages.json* file contains information on every damage dealt such as the player positions, weapon used, damage dealt etc. It has 337,151 rows and 42 columns.
 
 
 ## Flashes data
 
-The flashes data stored in the *ALL_flashes.json file* contains information on every flash grenade thrown.
+The flashes data stored in the *ALL_flashes.json file* contains information on every flash grenade thrown. It has 232,181 rows and 36 columns. It has 298,613 rows and 30 columns.
 
 
 ## grenades data
 
-The grenades data stored in the *ALL_grenades.json file* contains information on every grenades thrown that is not a flash grenade.
+The grenades data stored in the *ALL_grenades.json file* contains information on every grenades thrown that is not a flash grenade. It has 298,613 rows and 30 columns.
 
 
 

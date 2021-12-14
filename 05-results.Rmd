@@ -116,7 +116,7 @@ df.mlt %>% ggplot(aes(x=yvalue, y=relative_score_diff))+
 
 
 ```
-We can see that some indicators are more correlated than others to the relative score difference (difference of the winner's and loser's scores over the sum of the scores). For instance the kpr indicator has a correlation score of 0.6 with the relative score difference and thus can be used to evaluate a player's performance. On the contrary, the strafing and hs_ratio indicators have little to do with a team's success.
+We can see that some indicators are more correlated than others to the relative score difference (difference of the winner's and loser's scores over the sum of the scores). For instance the kpr indicator has a correlation score of 0.6 with the relative score difference and thus can be used to evaluate a player's performance. On the contrary, the strafing and hs_ratio indicators have little to do with a team's success. 
 
 A PCA analysis better helps visualize indicators that better reflects a team's chance of winning.
 
@@ -208,7 +208,7 @@ ggtitle("Team ratings at each event")  +
 geom_bar(stat="identity")+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
-As expected the winner team is consistently in the top team ratings. However sometimes, some teams get even better ratings than the winner. This is explained by the fact that some teams have a solid performance throughout the tournament, only to get eliminated in the final stage. For example, in the Eleague Major 2017 event, Virtus.Pro was eliminated by Astralis in the finals, and Faze Clan got eliminated in the quarter-finals.
+As expected the winner team is consistently in the top team ratings. 6 times out of 10, the winner team has the best rating between 70 and 100. However sometimes, some teams get even better ratings than the winner. This is explained by the fact that some teams have a solid performance throughout the tournament, only to get eliminated in the final stage. For example, in the Eleague Major 2017 event, Virtus.Pro was eliminated by Astralis in the finals, and Faze Clan got eliminated in the quarter-finals. [1](https://www.hltv.org/events/2471/eleague-major-2017)
 
 ## Players performance
 
@@ -254,7 +254,9 @@ A <- playerstat  %>%  filter(match_played>10)  %>%  top_n(-30,rating) %>% arrang
 library(patchwork)
 A+B
 ```
-The player Autimatic has the highest rating of all, and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2019 and 2020 by the [HLTV](https://hltv.org) website means that our combined rating reflects the different ratings of other sites such as HLTV.
+The player Autimatic has the highest rating of all, and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2018 and 2019 by the [HLTV](https://hltv.org) website means that our combined rating reflects the different ratings of other sites such as HLTV. Note that the player Zywoo started his career during 2018 thus is not this the top player raking of this year. [2](https://www.hltv.org/news/25028/official-vitality-unveil-team) [3](https://www.hltv.org/news/28749/top-20-players-of-2019-introduction),[4](https://www.hltv.org/news/25735/top-20-players-of-2018-introduction)
+
+There is almost 20 points of rating score  difference between the top rated player and the 30th best rated player. The same can the said for the worst rated player. As a result, it is quite easy to differentiate players as the ratings are not too close to each other.
 
 It is often hard to compare teams and players across events because players often change teams. One way to cross the information is to visualize the teams of a player:
 
@@ -494,4 +496,14 @@ The same can be said for the cz-75 in 2018. Also, the p250, five-seven and tec-9
 Finally, it happens that players discover that a weapon can be very effective, even without its characteristics being changed. This is what happened in 2019 when players started to use the AUG and the SG 553 weapons for their good accuracy at long range. 
 
 
+[1] Eleague Major 2017, Overview page, [HLTV.ORG](https://www.hltv.org/events/2471/eleague-major-2017)
+
+[2] OFFICIAL: VITALITY UNVEIL TEAM, MIRAA, 2018[HLTV.ORG](https://www.hltv.org/news/25028/official-vitality-unveil-team)
+
+[3] Top 20 players of 2019: INTRODUCTION, Striker, 2019 [HLTV.ORG](https://www.hltv.org/news/28749/top-20-players-of-2019-introduction)
+
+[4] Top 20 players of 2018: INTRODUCTION, Professeur, 2018 [HLTV.ORG](https://www.hltv.org/news/25735/top-20-players-of-2018-introduction)
+[] NEW UPDATE CHANGES THE UMP45, Sander, 2017, [HLTV.ORG](https://www.hltv.org/news/20546/new-update-changes-the-ump45)
+
+[] Release Notes for 4/10/2020, Valve, 2020, [update notes](https://blog.counter-strike.net/index.php/2020/04/29649/)
 
