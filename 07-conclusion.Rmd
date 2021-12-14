@@ -13,7 +13,7 @@ Also while we had a look at players' positions in a match, a more precise round-
 
 With e-sport organizations becoming more professional with dedicated game analysts working for the players, there have been several tools [1],[2],[3] that have been created to better analyze and visualize game data. 
 
-It would also be interesting to have a look at casual players' data to see how they differ from pro players. The fact that game developers already use machine learning to detect online cheaters in game means that there is still a lot to be explored.
+Finally, it would be interesting to have a look at casual players' data to see how they differ from pro players. The fact that game developers already use machine learning to detect online cheaters in game means that there is still a lot to be explored.
 
 Overall, exploring the topic of game data analysis was very interesting and we learned a lot about R graphs creation and interactive graphs with D3. 
 
