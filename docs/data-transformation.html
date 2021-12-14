@@ -138,7 +138,7 @@
 <h1><span class="header-section-number">Chapter 3</span> Data transformation</h1>
 <div id="getting-readable-data" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Getting readable data</h2>
-<p>We used Selenium and Beautiful Soup to parse the <a href="http://hltv.org">HLTV</a> website and to download the demo files. To avoid putting too much load on the site, we downloaded the demo files over the course of a full week. This resulted in over 600 demo files.</p>
+<p>We used <a href="https://www.selenium.dev/">Selenium</a> and <a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/">Beautiful Soup</a> to parse the <a href="http://hltv.org">HLTV</a> website and to download the demo files. To avoid putting too much load on the site, we downloaded the demo files over the course of a full week. This resulted in over 600 demo files. <a href="https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/code/Parser%20and%20Demo%20Downloader%20.ipynb">Python notebook - parser and demo downloader</a></p>
 <p>To generate readable data from the demo files, we used a python <a href="https://github.com/pnxenopoulos/csgo">library</a> [1] to parse them in JSON files, resulting in 625 successful conversions and 20GB of pre-processed data from the original 80+GB of data. <a href="https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/code/Pre-processing.ipynb">Python notebook - pre-processing</a>. This process concerts the demo files into json files.</p>
 <p>The pre-processed data is still very much dirty as some files were corrupted. Also, in-game technical pauses, warmup rounds, game restarts, etc, can mess up the format and add rounds. We still managed to clean the data with the csgo python library cleaning functions.</p>
 <p>The following Python notebook explains the data structure of a generated JSON file: <a href="https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/code/Understanding%20the%20data.ipynb">Python notebook - data structures</a></p>
@@ -189,7 +189,7 @@ The various columns in the damages data set are:</p>
 </div>
 <div id="flashes-data" class="section level2" number="3.4">
 <h2><span class="header-section-number">3.4</span> Flashes data</h2>
-<p>The flashes data stored in the <em>ALL_flashes.json file</em> contains information on every flash grenade thrown. It has 232,181 rows and 36 columns. It has 232,181 rows and 36 columns.
+<p>The flashes data stored in the <em>ALL_flashes.json file</em> contains information on every flash grenade thrown. It has 232,181 rows and 36 columns.
 The various column names in the flashes data set are:</p>
 <pre><code>##  [1] &quot;tick&quot;             &quot;seconds&quot;          &quot;clockTime&quot;        &quot;attackerSteamID&quot; 
 ##  [5] &quot;attackerName&quot;     &quot;attackerTeam&quot;     &quot;attackerSide&quot;     &quot;attackerX&quot;       
