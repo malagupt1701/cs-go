@@ -188,8 +188,6 @@ With a new combined rating, we can take a closer look at each team's performance
 # TOP TEAMS AT EACH EVENT
 #filtering
 
-team_killsstat %>% dplyr::group_by(team,event)  %>% dplyr::summarize(rating=mean(rating)) 
-
 top_teams <- team_killsstat %>% group_by(team,event) %>% summarize(rating=mean(rating)) %>% filter( !is.nan(rating) ,rating!=0) 
 #list of events
 level_order <- c('DreamHack Winter 2013','EMS One Katowice 2014','ESL One Cologne 2014','DreamHack Winter 2014','ESL One Katowice 2015','ESL One Cologne 2015','DreamHack Open Cluj-Napoca 2015','MLG Columbus 2016','ESL One Cologne 2016','ELEAGUE Major 2017','PGL Major Krakow 2017','ELEAGUE Major 2018','FACEIT Major 2018','IEM Katowice 2019','StarLadder Major Berlin 2019')
