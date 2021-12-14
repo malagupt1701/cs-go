@@ -41,7 +41,7 @@ We generated standard indicators used by event organisors and sites from the dat
 
 - kpr : average number of kills per round
 
-- adr: average damage per round)
+- adr: average damage per round
 
 - first_kill_ratio: ratio of the time where the team or player gets the first kill (which grants a numerical advantage)
 
@@ -116,7 +116,11 @@ df.mlt %>% ggplot(aes(x=yvalue, y=relative_score_diff))+
 
 
 ```
-We can see that some indicators are more correlated than others to the relative score difference (difference of the winner's and loser's scores over the sum of the scores). For instance the kpr indicator has a correlation score of 0.6 with the relative score difference and thus can be used to evaluate a player's performance. On the contrary, the strafing and hs_ratio indicators have little to do with a team's success.
+We can see that some indicators are more correlated than others to the relative score difference (difference of the winner's and loser's scores over the sum of the scores). 
+For instance the kpr indicator has a correlation score of 0.6 with the relative score difference and thus can be used to evaluate a player's performance. 
+On the contrary, the strafing and hs_ratio indicators have little to do with a team's success. Overall we can see that kpr (ie:average number of kills per round),
+adr (ie: average damage per round) and first_kill_ratio are three indicator variables which has a strong positive correlation with relative score difference
+
 
 A PCA analysis better helps visualize indicators that better reflects a team's chance of winning.
 
@@ -254,9 +258,10 @@ A <- playerstat  %>%  filter(match_played>10)  %>%  top_n(-30,rating) %>% arrang
 library(patchwork)
 A+B
 ```
-The player Autimatic has the highest rating of all, and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2019 and 2020 by the [HLTV](https://hltv.org) website means that our combined rating reflects the different ratings of other sites such as HLTV.
 
-It is often hard to compare teams and players across events because players often change teams. One way to cross the information is to visualize the teams of a player:
+The player Autimatic has the highest rating of all, and has one win with his team Cloud9 in the Boston Major. Interestingly, Zywoo, s1mple and device are the immediate 3 highest rated players after autimatic. The fact that those three players where nominated in the top 3 players in 2019 and 2020 by the [HLTV](https://hltv.org) website means that our combined rating reflects the different ratings of other sites such as HLTV.
+The rating is derived from the combined effort of the player considering various parameteres like avergae kills per round, damages through grenade, head shot etc, number of first kill shot , health of the player, number of flashes etc.It is often hard to compare teams and players across events because players often change teams.
+One way to cross the information is to visualize the teams of a player:
 
 ```{r interactalluv}
 library(parcoords)
@@ -283,6 +288,10 @@ players %>%
        colorScheme = "schemeCategory10"),
        withD3=T,brushMode="1D-axes",reorderable = T,queue=T,alpha=0.5)
 ```
+
+This shows us, how players changed teams over the course of various events and how few players remained in the same team for multiple events.
+For instance, players Flamie and Edward remained in the team Natus Vincere for multiple events.
+
 
 ```{r alluvial , fig.height=6,fig.width=13}
 
@@ -421,7 +430,8 @@ labs(color='Side')
 
 ```
 
-The drop in the win percentage differences after 2016 can be attributed to the update of the nuke, inferno and overpass maps. Maps updates often include changes in the layout to give more advantage to a given side.
+The drop in the win percentage differences after 2016 can be attributed to the update of the nuke, inferno and overpass maps.
+Maps updates often include changes in the layout to give more advantage to a given side.
 
 ```{r mapwinrates,  fig.height=8,fig.width=8}
 map_wins <- wins %>% group_by(event,map) %>% summarise(event=last(event),tot=n(),T_percent=100*sum(win_side=='T')/n()) %>% mutate(CT_percent=100-T_percent)
@@ -436,6 +446,10 @@ labs(title = "Winrates for each map", x = "Events",  y = "Winrate (percentage)")
 labs(color='Side') 
 
 ```
+In CS:GO, teams can play on a range of different map layouts in casual play and in professional tournaments. 
+Anecdotally, players usually have a favourite map or one they think they preform poorly on. 
+Professional teams often spend hours training on these maps, so it is interesting to see if winrate across different maps.
+
 Nuke as been removed from the official maps after Katowice 2015 and reintroduced for Cologne 2016. It was known to greatly favor the CT side, often forcing the team starting on the T side to have an impressive comeback after switching sides on the half time.
 But after the nuke map update the balance greatly improved.
 

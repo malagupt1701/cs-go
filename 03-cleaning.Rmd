@@ -17,26 +17,38 @@ To combine the json files and join the matches information such as score, winner
 
 [Lion drive link to the combined json files and parsed html](https://drive.google.com/drive/folders/1R86RveRkboHe123dH0ieMpk8U_hgZ6qH?usp=sharing) (1.5GB)
 
+grenades <- jsonlite::fromJSON("data/ALL_grenades.json", simplifyVector = TRUE)
+kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
+damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
+flashes <- jsonlite::fromJSON("data/ALL_flashes.json", simplifyVector = TRUE)
+
 ## Kills data
 
 The kills data stored in the *ALL_kills.json* file contains information on every kill that happened such as the player positions, weapon used etc.
+The various columns in the kills data set are: 
 
+colnames(kills)
 
 ## Damages data
 
 The damages data stored in the *ALL_damages.json* file contains information on every damage dealt such as the player positions, weapon used, damage dealt etc.
+The various columns in the damages data set are: 
 
+colnames(damages)
 
 ## Flashes data
 
 The flashes data stored in the *ALL_flashes.json file* contains information on every flash grenade thrown.
+The various column names in the flashes data set are: 
 
+colnames(flashes)
 
 ## grenades data
 
 The grenades data stored in the *ALL_grenades.json file* contains information on every grenades thrown that is not a flash grenade.
+The various column names in the grenades data set are: 
 
-
+colnames(grenades)
 
 ## Common data
 
