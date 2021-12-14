@@ -4,7 +4,7 @@
 
 We used Selenium and Beautiful Soup to parse the [HLTV](http://hltv.org) website and to download the demo files. To avoid putting too much load on the site, we downloaded the demo files over the course of a full week. This resulted in over 600 demo files.
 
-To generate readable data from the demo files, we used a python [library](https://github.com/pnxenopoulos/csgo) (1) to parse them in JSON files, resulting in 625 successful conversions and 20GB of pre-processed data from the original 80+GB of data. [Python notebook - pre-processing](https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/code/Pre-processing.ipynb). This process concerts the demo files into json files. 
+To generate readable data from the demo files, we used a python [library](https://github.com/pnxenopoulos/csgo) [1] to parse them in JSON files, resulting in 625 successful conversions and 20GB of pre-processed data from the original 80+GB of data. [Python notebook - pre-processing](https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/code/Pre-processing.ipynb). This process concerts the demo files into json files. 
 
 The pre-processed data is still very much dirty as some files were corrupted. Also in-game technical pauses, warmup rounds, game restarts, etc,  can mess up the format and add rounds. We still managed to clean the data with the csgo python library cleaning functions.
 
@@ -12,47 +12,72 @@ The following Python notebook explains the data structure of a generated JSON fi
 
 To narrow down the amount of data points, we chose to merge all the matches json files into 5 json files containing information that we judged relevant for analysis : kills data, damages data, flashed data,and grenades data. To do so, we had to iterate through all the json files and all the relevant keys that we wanted to analyse.
 
-To combine the json files and join the matches information such as score, winner and teams, we used the parsed html from [HLTV](http://hltv.org) to cross the informations. [Python notebook - combining json files](https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/code/Combining%20data.ipynb). The last step allows to have consistent data across all matches and events that can later be joined, or grouped together in R.
+To combine the json files and join the matches information such as score, winner and teams, we used the parsed html from [HLTV](http://hltv.org) to cross the information. [Python notebook - combining json files](https://github.com/anhvung/csgo_pro_matches_analysis/blob/main/code/Combining%20data.ipynb). The last step allows to have consistent data across all matches and events that can later be joined, or grouped together in R.
 
 
 [Lion drive link to the combined json files and parsed html](https://drive.google.com/drive/folders/1R86RveRkboHe123dH0ieMpk8U_hgZ6qH?usp=sharing) (1.5GB)
+
+
+
+```{r}
+#This is how to load json files 
+library(jsonlite)
+library(tidyverse)
+#pca libraries conflict with dplyr
+library(conflicted)
 
 grenades <- jsonlite::fromJSON("data/ALL_grenades.json", simplifyVector = TRUE)
 kills <- jsonlite::fromJSON("data/ALL_kills.json", simplifyVector = TRUE)
 damages <- jsonlite::fromJSON("data/ALL_damages.json", simplifyVector = TRUE)
 flashes <- jsonlite::fromJSON("data/ALL_flashes.json", simplifyVector = TRUE)
 
+```
+
 ## Kills data
 
-The kills data stored in the *ALL_kills.json* file contains information on every kill that happened such as the player positions, weapon used etc.
-The various columns in the kills data set are: 
 
+The kills data stored in the *ALL_kills.json* file contains information on every kill that happened such as the player positions, weapon used etc. It has 103,261 rows and 59 columns.
+
+```{r}
 colnames(kills)
+```
+
 
 ## Damages data
 
-The damages data stored in the *ALL_damages.json* file contains information on every damage dealt such as the player positions, weapon used, damage dealt etc.
-The various columns in the damages data set are: 
 
+ 
+
+The damages data stored in the *ALL_damages.json* file contains information on every damage dealt such as the player positions, weapon used, damage dealt etc. It has 337,151 rows and 42 columns.
+The various columns in the damages data set are:
+```{r}
 colnames(damages)
+```
+
 
 ## Flashes data
 
-The flashes data stored in the *ALL_flashes.json file* contains information on every flash grenade thrown.
-The various column names in the flashes data set are: 
 
+The flashes data stored in the *ALL_flashes.json file* contains information on every flash grenade thrown. It has 232,181 rows and 36 columns. It has 232,181 rows and 36 columns.
+The various column names in the flashes data set are: 
+```{r}
 colnames(flashes)
+```
+
 
 ## grenades data
 
-The grenades data stored in the *ALL_grenades.json file* contains information on every grenades thrown that is not a flash grenade.
+The grenades data stored in the *ALL_grenades.json file* contains information on every grenades thrown that is not a flash grenade. It has 298,613 rows and 30 columns.
 The various column names in the grenades data set are: 
 
+```{r}
 colnames(grenades)
+```
+
 
 ## Common data
 
 All the previous json data have the same information on the matches (match id, event, date) and teams (team1, team2, winner).
 
 
-(1) Analyzing Counter-Strike: Global Offensive Data, Peter Xenopoulos, (2021), GitHub repository, https://github.com/pnxenopoulos/csgo
+[1] Analyzing Counter-Strike: Global Offensive Data, Peter Xenopoulos, (2021), GitHub repository, https://github.com/pnxenopoulos/csgo
