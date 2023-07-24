@@ -2,7 +2,7 @@
 
 **[Link to the book](https://anhvung.github.io/csgo_pro_matches_analysis/)**
 
-*By Anh-Vu Nguyen, Malaika Gupta and Wael Boukhobza*
+*By Malaika Gupta, Anh-Vu Nguyen and Wael Boukhobza*
 
 Counter-Strike Global Offensive or CSGO is a team-based video game that is among the most popular ones in the e-sport scene. With growing organizations and sponsors backing the players, the top teams have their own game ‘analyst’ whose task is to study the opponents and come up with the best in-game strategies. Data generated from thousands of matches can help viewers understand the game, and shape how future teams are going to play strategically.
 
